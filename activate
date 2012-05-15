@@ -1,0 +1,8 @@
+#!/bin/sh
+# run me with . activate
+
+OLD_PATH=$PATH
+PATH=$(pwd)/node_modules/.bin:$PATH
+deactivate () {
+    PATH=$OLD_PATH
+}
