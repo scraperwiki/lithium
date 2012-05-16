@@ -1,5 +1,8 @@
 #!/usr/bin/env coffee
 
+help = (args) ->
+  process.stdout.write('Very helpful help\n')
+
 exports.main = (args) ->
     # If supplied *args* should be a list of arguments,
     # including args[0], the command name; if not supplied,
@@ -8,9 +11,6 @@ exports.main = (args) ->
         args = process.argv[1..]
     switch args[1]
       when 'help' then help(args)
-      else process.stderr.write('Try li help for help')
+      else process.stderr.write('Try li help for help\n')
 
 exports.main()
-
-help = (args) ->
-  process.stdout.write('Very helpful help')
