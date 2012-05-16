@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
-main = (args) ->
+exports.main = (args) ->
     if args?
-        args = sys.argv()
+        args = process.argv
 
-main()
+exports.main()
