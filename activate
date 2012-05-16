@@ -2,7 +2,10 @@
 # run me with . activate
 
 OLD_PATH=$PATH
+OLD_PS1=$PS1
 PATH=$(pwd)/node_modules/.bin:$PATH
+PS1="[li]$PS1"
 deactivate () {
     PATH=$OLD_PATH
+    PS1=$OLD_PS1
 }
