@@ -1,3 +1,5 @@
+sinon = require 'sinon'
+
 li = require 'li'
 
 describe 'li', ->
@@ -6,4 +8,8 @@ describe 'li', ->
 
   describe 'help', ->
     it 'offers help', ->
-      li.main(['li', 'help'])
+      mock = sinon.mock process.stdout
+      mock.expects 'write'
+      li.main ['li', 'help']
+      mock.verify()
+

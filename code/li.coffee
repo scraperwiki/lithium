@@ -6,5 +6,11 @@ exports.main = (args) ->
     # process.argv will be used.
     if not args?
         args = process.argv[1..]
+    switch args[1]
+      when 'help' then help(args)
+      else process.stderr.write('Try li help for help')
 
 exports.main()
+
+help = (args) ->
+  process.stdout.write('Very helpful help')
