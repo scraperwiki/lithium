@@ -4,7 +4,7 @@
 # a cloud server, or part of a configuration.
 
 fs = require 'fs'
-cf = require '../config'
+cf = require '../code/config'
 
 describe 'Vanilla Config', ->
   it 'should exist', ->
