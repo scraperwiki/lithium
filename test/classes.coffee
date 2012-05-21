@@ -30,4 +30,8 @@ describe 'Config inclusion', ->
     it 'should contain included fields from vanilla', ->
       config.ram.should.equal '512M'
       config.disk_size.should.equal '2048G'
+    
+    it 'should not have its own fields overriden', ->
+      config.name.should.equal 'Boxecutor'
+
 
