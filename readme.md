@@ -1,6 +1,6 @@
-Lithium
+# Lithium
 
-Controlling sysadmin insanity
+## Controlling sysadmin insanity
 
 Lithium is a system of configurations and a command line tool to
 control cloud based server instances.
