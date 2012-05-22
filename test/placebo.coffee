@@ -5,11 +5,27 @@
 should = require 'should'
 
 class Placebo
+  # TODO: Which methods should have what arguments? Should
+  # destroy be an instance method?
+
+  # Create a server ready to run. Somewhere on the internet.
+  # Servers are created in the "stopped" state.
   @create: ->
+  # Destroy a previously created server.
   @destroy: ->
+  # Start the server. Immediately go into the 'starting' state,
+  # and if everything goes okay, then sometime later it will be
+  # in the 'running' state.
   start: ->
+  # Stop the server. Immediately go into the 'stopping' state,
+  # and if everything goes okay, then sometime later it will be
+  # in the 'stopped' state.
   stop: ->
-#TODO: create, destroy args, destroy as instance method?
+  # Return the state of the server.  Will be one of:
+  # 'stopped', 'running', 'starting', 'stopping', and probably
+  # others.
+  state: ->
+
 describe 'Placebo', ->
   it 'should exist', ->
     should.exist Placebo
