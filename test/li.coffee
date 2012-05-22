@@ -17,4 +17,8 @@ describe 'li', ->
     it 'offers help', ->
       li.main ['li', 'help']
       mock.verify()
+  describe 'start', ->
+    it 'has a start command', ->
+      li.main ['li', 'start', 'placebo', 'vanilla']
+      mock.verify()
 
