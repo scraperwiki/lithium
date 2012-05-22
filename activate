@@ -17,3 +17,4 @@ deactivate () {
     PS1=$OLD_PS1
     NODE_PATH=$OLD_NODE_PATH
 }
+alias li='code/li.coffee'
