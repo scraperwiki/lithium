@@ -13,6 +13,6 @@ exports.main = (args) ->
   switch args[1]
     when 'help' then help(args)
     when undefined then help(args)
-    else process.stderr.write("Try li help for help#{args[1]}\n")
+    else process.stderr.write("Try li help for help\n")
 
 exports.main()
