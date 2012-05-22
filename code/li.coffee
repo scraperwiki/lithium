@@ -3,6 +3,9 @@
 help = (args) ->
   process.stdout.write('Very helpful help\n')
 
+start = (args) ->
+  process.stderr.write('Not yet implemented\n')
+
 exports.main = (args) ->
   # If supplied *args* should be a list of arguments,
   # including args[0], the command name; if not supplied,
@@ -12,6 +15,7 @@ exports.main = (args) ->
 
   switch args[1]
     when 'help' then help(args)
+    when 'start' then start(args)
     when undefined then help(args)
     else process.stderr.write("Try li help for help\n")
 
