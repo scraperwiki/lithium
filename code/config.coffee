@@ -10,5 +10,6 @@ exports.Config = class Config
     config = JSON.parse text
     if config.include?
       @_load_config config.include
-    if key isnt 'include' and not @[key]? then @[key] = value for key, value of config
-
+    for key, value of config
+      do (key, value) =>
+        if key isnt 'include' then @[key] = value
