@@ -1,13 +1,10 @@
-# run with mocha 
+# Placebo and its Mocha tests.
 
-# Mocha tests for the placebo.
-# a cloud server, or part of a configuration.
 should = require 'should'
-_      = require 'underscore'
+_      = require 'underscore' 
 
 class Placebo
   @instances: []
-
   # TODO: Which methods should have what arguments? Should
   # destroy be an instance method?
 
@@ -17,7 +14,8 @@ class Placebo
     @instances.push new Placebo
 
   # Destroy a previously created server.
-  @destroy: ->
+  @destroy: (instance) ->
+    @instances.pop instance
 
   # List instances in the cloud
   @list: ->
@@ -43,19 +41,22 @@ describe 'Placebo', ->
   it 'can create a placebo instance with a config', ->
     should.exist Placebo.create
 
-  it 'can destroy a placebo instance, given its name', ->
-    should.exist Placebo.destroy
-  
   describe 'when two instances exist', ->
+    l = null
+
     before ->
       (_ 2).times -> Placebo.create()
+      l = Placebo.list()
 
     it 'can list created instances', ->
-      l = Placebo.list()
       l.should.be.an.instanceof Array
       l.length.should.equal 2
       l[0].should.be.an.instanceof Placebo
       l[1].should.be.an.instanceof Placebo
+
+    it 'can destroy a placebo instance, given its name', ->
+      Placebo.destroy Placebo.list()[0]
+      l.length.should.equal 1
 
   describe 'a new placebo instance', ->
     placebo = null
