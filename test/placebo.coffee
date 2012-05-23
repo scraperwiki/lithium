@@ -3,17 +3,14 @@
 should = require 'should'
 _      = require 'underscore'
 
-class Placebo
-  @instances: []
-  # TODO: Which methods should have what arguments? Should
-  # destroy be an instance method?
+ins    = require '../code/instance'
 
-  # Create a server ready to run. Somewhere on the internet.
-  # Servers are created in the "stopped" state.
+class Placebo extends ins.Instance
+  @instances: []
+
   @create: ->
     @instances.push new Placebo
 
-  # Destroy a previously created server.
   @destroy: (instance) ->
     @instances.pop instance
 
@@ -21,19 +18,10 @@ class Placebo
   @list: ->
     _.clone @instances
 
-  # Start the server. Immediately go into the 'starting' state,
-  # and if everything goes okay, then sometime later it will be
-  # in the 'running' state.
   start: ->
 
-  # Stop the server. Immediately go into the 'stopping' state,
-  # and if everything goes okay, then sometime later it will be
-  # in the 'stopped' state.
   stop: ->
 
-  # Return the state of the server.  Will be one of:
-  # 'stopped', 'running', 'starting', 'stopping', and probably
-  # others.
   state: ->
 
 describe 'Placebo', ->
