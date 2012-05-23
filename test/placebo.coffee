@@ -1,7 +1,7 @@
 # Placebo and its Mocha tests.
 
 should = require 'should'
-_      = require 'underscore' 
+_      = require 'underscore'
 
 class Placebo
   @instances: []
@@ -19,7 +19,7 @@ class Placebo
 
   # List instances in the cloud
   @list: ->
-    @instances
+    _.clone @instances
 
   # Start the server. Immediately go into the 'starting' state,
   # and if everything goes okay, then sometime later it will be
@@ -56,7 +56,7 @@ describe 'Placebo', ->
 
     it 'can destroy a placebo instance, given its name', ->
       Placebo.destroy Placebo.list()[0]
-      l.length.should.equal 1
+      Placebo.list().length.should.equal 1
 
   describe 'a new placebo instance', ->
     placebo = null
