@@ -1,30 +1,9 @@
 # Placebo and its Mocha tests.
 
-should = require 'should'
-_      = require 'underscore'
+should  = require 'should'
+_       = require 'underscore'
 
-ins    = require '../code/instance'
-
-class Placebo extends ins.Instance
-  @instances: []
-
-  @create: (config) ->
-    instance = new Placebo config
-    @instances.push instance
-    instance
-
-  @destroy: (instance) ->
-    @instances.pop instance
-
-  # List instances in the cloud
-  @list: ->
-    _.clone @instances
-
-  start: ->
-
-  stop: ->
-
-  state: ->
+Placebo = (require '../code/placebo').Placebo
 
 describe 'Placebo', ->
 
