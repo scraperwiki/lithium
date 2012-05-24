@@ -31,3 +31,11 @@ exports.Instance = class Instance
   # others.
   state: ->
 
+  # Run a shell command as root on the server.
+  # This is useful for testing, but I don't know whether we'll
+  # want it in production.
+  # Does this background it and return the process id?
+  # (We'd have another command for retrieving stdout and stderr.)
+  # Or does this return a list of [stdout, stderr] ?
+  # (That would be convenient.)
+  sh: -> (command) ->
