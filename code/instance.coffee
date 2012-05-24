@@ -38,4 +38,5 @@ exports.Instance = class Instance
   # (We'd have another command for retrieving stdout and stderr.)
   # Or does this return a list of [stdout, stderr] ?
   # (That would be convenient.)
+  # I'll assume the latter for now.
   sh: -> (command) ->
