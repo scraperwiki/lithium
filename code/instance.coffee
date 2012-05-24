@@ -1,9 +1,14 @@
+#
 # Instance interface.
+cf     = require 'config'
 
 exports.Instance = class Instance
+  constructor: (config) ->
+    @config = new cf.Config config
+
   # Create a server ready to run. Somewhere on the internet.
   # Servers are created in the "stopped" state.
-  @create: ->
+  @create: (config) ->
 
   # Destroy a previously created server.
   @destroy: (instance) ->

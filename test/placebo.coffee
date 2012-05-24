@@ -8,8 +8,10 @@ ins    = require '../code/instance'
 class Placebo extends ins.Instance
   @instances: []
 
-  @create: ->
-    @instances.push new Placebo
+  @create: (config) ->
+    instance = new Placebo config
+    @instances.push instance
+    instance
 
   @destroy: (instance) ->
     @instances.pop instance
@@ -27,13 +29,17 @@ class Placebo extends ins.Instance
 describe 'Placebo', ->
 
   it 'can create a placebo instance with a config', ->
-    should.exist Placebo.create
+    instance = Placebo.create 'boxecutor'
+    instance.should.be.an.instanceof Placebo
+    instance.config.name.should.equal 'boxecutor'
+    Placebo.list().should.include instance
+    Placebo.destroy instance
 
   describe 'when two instances exist', ->
     l = null
 
     before ->
-      (_ 2).times -> Placebo.create()
+      (_ 2).times -> Placebo.create 'vanilla'
       l = Placebo.list()
 
     it 'can list created instances', ->
@@ -50,7 +56,7 @@ describe 'Placebo', ->
     placebo = null
 
     before ->
-      placebo = new Placebo
+      placebo = new Placebo 'boxecutor'
 
     it 'has a start method', ->
       should.exist placebo.start

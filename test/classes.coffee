@@ -18,7 +18,7 @@ describe 'Config inclusion', ->
       config = new cf.Config 'vanilla'
 
     it 'should contain the fields for vanilla', ->
-      config.name.should.equal 'Vanilla'
+      config.name.should.equal 'vanilla'
       config.description.should.equal 'A fairly plain Linux cloud server'
       config.ram.should.equal '512M'
       config.disk_size.should.equal '2048G'
@@ -32,6 +32,6 @@ describe 'Config inclusion', ->
       config.disk_size.should.equal '2048G'
     
     it 'should not have its own fields overriden', ->
-      config.name.should.equal 'Boxecutor'
+      config.name.should.equal 'boxecutor'
 
 

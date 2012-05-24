@@ -1,5 +1,5 @@
 {
     "include"       : "vanilla",
-    "name"          : "Boxecutor",
+    "name"          : "boxecutor",
     "description"   : "Box execution server"
 }

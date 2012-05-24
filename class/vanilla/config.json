@@ -1,5 +1,5 @@
 {
-    "name"          : "Vanilla",
+    "name"          : "vanilla",
     "description"   : "A fairly plain Linux cloud server",
     "ram"           : "512M",
     "disk_size"     : "2048G"
