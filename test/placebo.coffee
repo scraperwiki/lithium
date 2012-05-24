@@ -95,7 +95,7 @@ describe 'Placebo', ->
 
     it 'creates the databox in a chroot jail in /home/boxname', ->
       placebo.create_box('rvwinkle')
-      placebo.sh("su -c rvwinkle 'touch nine-pins'").should.equal ['', '']
+      placebo.sh("su -c rvwinkle 'cd /; touch nine-pins'").should.equal ['', '']
       placebo.sh("[ -e /home/rvwinkle/nine-pins ] || exit 1").should.throw()
       
 
