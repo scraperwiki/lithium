@@ -42,3 +42,20 @@ describe 'Placebo', ->
 
     it 'has a stop method', ->
       should.exist placebo.stop
+
+    it 'has a sh method', ->
+      should.exist placebo.sh
+
+    it 'returns stdout when you run shell commands', ->
+      placebo.sh('echo Hello').should.equal 'Hello'
+
+    it 'throws stderr when you run shell commands', ->
+      command = 'cat this_file_does_not_exist'
+      result = 'cat: foo: input file is output file'
+      placebo.sh(command).should.throw result
+
+    it 'throws an exception when shell commands exit nonzero', ->
+      placebo.sh('exit 1').should.throw
+
+    it 'does not throw an exception when shell commands exit zero', ->
+      placebo.sh('exit 0').should.not.throw
