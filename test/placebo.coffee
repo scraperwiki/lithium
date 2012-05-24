@@ -68,12 +68,12 @@ describe 'Placebo', ->
       should.exist placebo.sh
 
     it 'returns stdout when you run shell commands', ->
-      placebo.sh('echo Hello').should.equal ['Hello', '']
+      placebo.sh('echo Hello').should.equal 'Hello'
 
-    it 'returns stderr when you run shell commands', ->
+    it 'throws stderr when you run shell commands', ->
       command = 'cat this_file_does_not_exist'
-      result = ['', 'cat: foo: input file is output file']
-      placebo.sh(command).should.equal result
+      result = 'cat: foo: input file is output file'
+      placebo.sh(command).should.throw result
 
     it 'throws an exception when shell commands exit nonzero', ->
       placebo.sh('exit 1').should.throw
