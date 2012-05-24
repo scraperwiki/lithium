@@ -46,6 +46,7 @@ describe 'Placebo', ->
       l.should.be.an.instanceof Array
       l.length.should.equal 2
       l[0].should.be.an.instanceof Placebo
+
       l[1].should.be.an.instanceof Placebo
 
     it 'can destroy a placebo instance, given its name', ->
@@ -71,4 +72,26 @@ describe 'Placebo', ->
       placebo = new Placebo 'boxecutor'
 
     it 'can print', ->
-      instance.config.sh('echo Hello').should.equal ['Hello', '']
+      placebo.config.sh('echo Hello').should.equal ['Hello', '']
+
+    it 'can raise errors', ->
+      command = 'rmdir nonexistant_directory'
+      result = ['', 'rmdir: failed to remove ‘nonexistant_directory’: No such file or directory']
+      placebo.config.sh(command).should.equal result
+
+    it 'can create a databox', ->
+      placebo.create_box('')
+
+    it 'can can\'t create two databoxes with the same name', ->
+      placebo.create_box('pbunyan')
+      placebo.create_box('pbunyan').should.throw
+
+    it 'creates the databox in a chroot jail in /home/boxname', ->
+      placebo.create_box('
+
+    it '', ->
+      
+
+    it '', ->
+      
+
