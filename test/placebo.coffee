@@ -71,25 +71,32 @@ describe 'Placebo', ->
     before ->
       placebo = new Placebo 'boxecutor'
 
-    it 'can print', ->
+    it 'can sends stdin', ->
       placebo.config.sh('echo Hello').should.equal ['Hello', '']
 
-    it 'can raise errors', ->
+    it 'can sends stdout', ->
       command = 'rmdir nonexistant_directory'
       result = ['', 'rmdir: failed to remove ‘nonexistant_directory’: No such file or directory']
       placebo.config.sh(command).should.equal result
 
+    it 'it sends errors', ->
+      placebo.config.sh('not_a_command').should.throw
+
     it 'can create a databox', ->
-      placebo.create_box('')
+      placebo.create_box('rvwinkle')
 
     it 'can can\'t create two databoxes with the same name', ->
       placebo.create_box('pbunyan')
       placebo.create_box('pbunyan').should.throw
 
-    it 'creates the databox in a chroot jail in /home/boxname', ->
-      placebo.create_box('
+    it 'can run commands in databoxes with su', ->
+      placebo.create_box('babe')
+      placebo.sh("su -c 'echo Hello' babe").should.equal ['Hello', '']
 
-    it '', ->
+    it 'creates the databox in a chroot jail in /home/boxname', ->
+      placebo.create_box('rvwinkle')
+      placebo.sh("su -c rvwinkle 'touch nine-pins'").should.equal ['', '']
+      placebo.sh("[ -e /home/rvwinkle/nine-pins ] || exit 1").should.throw()
       
 
     it '', ->
