@@ -63,3 +63,12 @@ describe 'Placebo', ->
 
     it 'has a stop method', ->
       should.exist placebo.stop
+
+  describe 'the shell works', ->
+    placebo = null
+
+    before ->
+      placebo = new Placebo 'boxecutor'
+
+    it 'can print', ->
+      instance.config.sh('echo Hello').should.equal ['Hello', '']
