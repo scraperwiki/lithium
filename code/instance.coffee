@@ -9,6 +9,7 @@ exports.Instance = class Instance
   # Create a server ready to run. Somewhere on the internet.
   # Servers are created in the "stopped" state.
   @create: (config) ->
+    @config = new cf.Config config
 
   # Destroy a previously created server.
   @destroy: (instance) ->
