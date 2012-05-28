@@ -69,7 +69,7 @@ exports.create = ->
 # Create disk from distribution
 exports.create_dist_disk = ->
   nock('https://api.linode.com')
-  .get('/?api_key=fakeapikey&api_action=linode.disk.createfromdistribution &LinodeID=206097&DistributionID=98&Label=system&Size=5048&rootPass=r00ter')
+  .get('/?api_key=fakeapikey&api_action=linode.disk.createfromdistribution&LinodeID=206102&DistributionID=98&Label=system&Size=20000&rootPass=r00ter')
   .reply 200,
     """
     { "ERRORARRAY":[],

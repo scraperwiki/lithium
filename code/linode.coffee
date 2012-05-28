@@ -14,11 +14,20 @@ exports.Linode = class Linode extends Instance
         'PlanID': plan_id
         'PaymentTerm': 1
       , (err, res) =>
+        @linode_id = res['LinodeID']
         client.call 'linode.update',
-          'LinodeID': res['LinodeID']
+          'LinodeID': @linode_id
           'Label': @config.name
           , (err, res) =>
-            callback()
+            @_get_distro @config.distribution, (id) =>
+              client.call 'linode.disk.createfromdistribution',
+                'LinodeID': @linode_id
+                'DistributionID': id
+                'Label': 'system'
+                'Size': @config.disk_size * 1000 # magic for now
+                'rootPass': 'r00ter' # magic for now
+                , (err, res) =>
+                  callback()
 
 
   # Takes RAM as MB and disk as GB
