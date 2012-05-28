@@ -93,10 +93,12 @@ describe 'Linode Instance', ->
     it 'calls linode.list', ->
       list_nock.isDone().should.be.true
 
-    it 'outputs an array of instances and their states', ->
+    it 'outputs an array of instances and their states & IDs', ->
       list.should.be.an.instanceof Array
       list.length.should.equal 2
-
+      list[0].state.should.equal 1
+      list[0].id.should.equal 206097
+      list[0].name.should.equal 'boxecutor_1'
 
   describe 'when destroying an instance', ->
     it 'gets the linodeid from the name'

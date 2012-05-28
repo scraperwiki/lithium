@@ -66,4 +66,5 @@ exports.Linode = class Linode extends Instance
   # Returns an array of instances, status should be a string?
   @_list: (callback) ->
     client.call 'linode.list', null, (err, res) ->
-      callback( _.map res, (l) -> {name: l['LABEL'], state: l['STATUS']} )
+      callback _.map res, (l) ->
+        {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
