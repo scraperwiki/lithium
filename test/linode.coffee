@@ -22,6 +22,21 @@ describe 'Linode Instance', ->
     it 'finds the plan that corresponds to the RAM & disk', ->
       plan_id.should.equal 1
 
+  describe 'matching a distribution', ->
+    distro_id = null
+    distro_nock = nocks.avail_distro()
+
+    before (done) ->
+      Linode._get_distro 'Ubuntu 12.04 LTS', (id) ->
+        distro_id = id
+        done()
+
+    it 'calls avail.distributions', ->
+      distro_nock.isDone().should.be.true
+
+    it 'finds a distro id by name', ->
+      distro_id.should.equal 98
+
   describe 'when creating an instance with the boxecutor config', ->
     linode = null
     plan_nock = nocks.plans()
@@ -38,7 +53,7 @@ describe 'Linode Instance', ->
     it 'calls linode.update to set the label', ->
       update_nock.isDone().should.be.true
 
-    it 'calls avail.distributions and matches the config distribution'
+
     # Disks should probably be specified in the config
     it 'calls linode.disk.createfromdistribution to create a system disk'
     it 'calls linode.disk.create to create a data disk'

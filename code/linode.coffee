@@ -27,3 +27,9 @@ exports.Linode = class Linode extends Instance
       p =  _.find res, (plan) ->
         plan['DISK'] == disk and plan['RAM'] == ram
       callback p['PLANID']
+
+  @_get_distro: (name, callback) ->
+    client.call 'avail.distributions', null, (err, res) ->
+      d = _.find res, (distro) ->
+        distro['LABEL'] == name
+      callback d['DISTRIBUTIONID']
