@@ -82,8 +82,21 @@ describe 'Linode Instance', ->
       create_config_nock.isDone().should.be.true
 
   describe 'when listing instances', ->
-    it 'calls linode.list'
-    it 'outputs an array of instances and their states'
+    list = null
+    list_nock = nocks.list()
+
+    before (done) ->
+      list = Linode._list (res) ->
+        list = res
+        done()
+
+    it 'calls linode.list', ->
+      list_nock.isDone().should.be.true
+
+    it 'outputs an array of instances and their states', ->
+      list.should.be.an.instanceof Array
+      list.length.should.equal 2
+
 
   describe 'when destroying an instance', ->
     it 'gets the linodeid from the name'
