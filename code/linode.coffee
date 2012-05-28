@@ -5,7 +5,10 @@ _s           = require('underscore.string')
 Instance = (require 'instance').Instance
 
 exports.Linode = class Linode extends Instance
-  client = new LinodeClient 'fakeapikey'
+  api_key = process.env['LINODE_API_KEY']
+  api_key = 'fakeapikey' if not api_key?
+
+  client = new LinodeClient api_key
 
   @create: (config, callback) ->
     super config
