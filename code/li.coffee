@@ -1,5 +1,7 @@
 #!/usr/bin/env coffee
 
+Linode = (require 'linode').Linode
+
 help = (args) ->
   process.stdout.write('Very helpful help\n')
 
@@ -12,6 +14,11 @@ start = (args) ->
   # if args[2] is 'placebo' then throw 'foo'
   process.stdout.write('started\n')
 
+create = (args) ->
+  process.stdout.write('Creating...\n')
+  Linode.create args[2], ->
+    process.stdout.write('Possibly created\n')
+
 exports.main = (args) ->
   # If supplied *args* should be a list of arguments,
   # including args[0], the command name; if not supplied,
@@ -22,6 +29,7 @@ exports.main = (args) ->
   switch args[1]
     when 'help' then help(args)
     when 'start' then start(args)
+    when 'create' then create(args)
     when undefined then help(args)
     else process.stderr.write("Try li help for help\n")
 
