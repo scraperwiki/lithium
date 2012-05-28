@@ -8,13 +8,18 @@ exports.Linode = class Linode extends Instance
 
   @create: (config, callback) ->
     super config
-    @_get_plan @config.ram, @config.disk_size, (plan_id) ->
+    @_get_plan @config.ram, @config.disk_size, (plan_id) =>
       client.call 'linode.create',
         'DatacenterID': 7
         'PlanID': plan_id
         'PaymentTerm': 1
-      , (err, res) ->
-        callback res
+      , (err, res) =>
+        client.call 'linode.update',
+          'LinodeID': res['LinodeID']
+          'Label': @config.name
+          , (err, res) =>
+            callback()
+
 
   # Takes RAM as MB and disk as GB
   @_get_plan: (ram, disk, callback) ->

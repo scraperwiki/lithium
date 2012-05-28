@@ -26,6 +26,7 @@ describe 'Linode Instance', ->
     linode = null
     plan_nock = nocks.plans()
     create_nock = nocks.create()
+    update_nock = nocks.linode_update()
 
     before (done) ->
       linode = Linode.create 'boxecutor', (res) ->
@@ -34,7 +35,9 @@ describe 'Linode Instance', ->
     it 'calls linode.create', ->
       create_nock.isDone().should.be.true
 
-    it 'calls linode.update to set the label'
+    it 'calls linode.update to set the label', ->
+      update_nock.isDone().should.be.true
+
     it 'calls avail.distributions and matches the config distribution'
     # Disks should probably be specified in the config
     it 'calls linode.disk.createfromdistribution to create a system disk'

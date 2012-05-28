@@ -171,8 +171,8 @@ exports.shutdown = ->
 
 # Linode update
 exports.linode_update = ->
-  nock('https://api.linode.com')
-  .get('/?api_key=fakeapikey&api_action=linode.update&LinodeID=206097&Label=test')
+  return nock('https://api.linode.com')
+  .get('/?api_key=fakeapikey&api_action=linode.update&LinodeID=206102&Label=boxecutor')
   .reply 200,
    """
    { "ERRORARRAY":[],
@@ -210,7 +210,6 @@ exports.linode_running = ->
   'content-type': 'text/html; charset=UTF-8'
   'transfer-encoding': 'chunked'
   connection: 'keep-alive'
-  'x-powered-by': 'Tiger Blood'
 
 exports.linode_shutdown = ->
   nock('https://api.linode.com')
