@@ -20,16 +20,16 @@ describe 'Config inclusion', ->
     it 'should contain the fields for vanilla', ->
       config.name.should.equal 'vanilla'
       config.description.should.equal 'A fairly plain Linux cloud server'
-      config.ram.should.equal '512M'
-      config.disk_size.should.equal '2048G'
+      config.ram.should.equal 512
+      config.disk_size.should.equal 20
 
   describe 'When boxecutor config is accessed', ->
     before ->
       config = new cf.Config 'boxecutor'
 
     it 'should contain included fields from vanilla', ->
-      config.ram.should.equal '512M'
-      config.disk_size.should.equal '2048G'
+      config.ram.should.equal 512
+      config.disk_size.should.equal 20
     
     it 'should not have its own fields overriden', ->
       config.name.should.equal 'boxecutor'
