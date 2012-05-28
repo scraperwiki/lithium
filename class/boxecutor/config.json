@@ -1,5 +1,6 @@
 {
     "include"       : "vanilla",
     "name"          : "boxecutor",
-    "description"   : "Box execution server"
+    "description"   : "Box execution server",
+    "kernel"        : "3.2.1"
 }
