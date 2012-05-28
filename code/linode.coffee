@@ -1,0 +1,24 @@
+LinodeClient = (require 'linode-api').LinodeClient
+_            = require('underscore')
+
+Instance = (require 'instance').Instance
+
+exports.Linode = class Linode extends Instance
+  client = new LinodeClient 'fakeapikey'
+
+  @create: (config, callback) ->
+    super config
+    @_get_plan @config.ram, @config.disk_size, (plan_id) ->
+      client.call 'linode.create',
+        'DatacenterID': 7
+        'PlanID': plan_id
+        'PaymentTerm': 1
+      , (err, res) ->
+        callback res
+
+  # Takes RAM as MB and disk as GB
+  @_get_plan: (ram, disk, callback) ->
+    client.call 'avail.LinodePlans', null, (err, res) ->
+      p =  _.find res, (plan) ->
+        plan['DISK'] == disk and plan['RAM'] == ram
+      callback p['PLANID']
