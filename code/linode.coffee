@@ -1,5 +1,6 @@
 LinodeClient = (require 'linode-api').LinodeClient
 _            = require('underscore')
+_s           = require('underscore.string')
 
 Instance = (require 'instance').Instance
 
@@ -27,7 +28,17 @@ exports.Linode = class Linode extends Instance
                 'Size': @config.disk_size * 1000 # magic for now
                 'rootPass': 'r00ter' # magic for now
                 , (err, res) =>
-                  callback()
+                  @disk_id = res['DiskID']
+                  @_get_kernel @config.kernel, (id) =>
+                    client.call 'linode.config.create',
+                      'LinodeID': @linode_id
+                      'KernelID': id
+                      'Label': @config.name
+                      'Comments': @config.description
+                      'DiskList': @disk_id
+                      'RootDeviceNum': 1
+                      , (err, res) =>
+                        callback()
 
 
   # Takes RAM as MB and disk as GB
@@ -42,3 +53,10 @@ exports.Linode = class Linode extends Instance
       d = _.find res, (distro) ->
         distro['LABEL'] == name
       callback d['DISTRIBUTIONID']
+
+  @_get_kernel: (version, callback) ->
+    client.call 'avail.kernels', null, (err, res) ->
+      k = _.find res, (kernel) ->
+        _s.contains kernel['LABEL'], version
+      callback k['KERNELID']
+
