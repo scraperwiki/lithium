@@ -81,3 +81,23 @@ describe 'Linode Instance', ->
     it 'calls linode.config.create to set up a Linode config', ->
       create_config_nock.isDone().should.be.true
 
+  describe 'when listing instances', ->
+    it 'calls linode.list'
+    it 'outputs an array of instances and their states'
+
+  describe 'when destroying an instance', ->
+    it 'gets the linodeid from the name'
+    it 'shuts the instance down if running'
+    it 'calls linode.delete on the instance'
+
+  describe 'when starting an instance', ->
+    it 'gets the linodeid from the name'
+    it 'calls linode.boot on the instance'
+
+  describe 'when stopping an instance', ->
+    it 'gets the linodeid from the name'
+    it 'calls linode.shutdown on the instance'
+
+  describe 'when restarting an instance', ->
+    it 'gets the linodeid from the name'
+    it 'calls linode.reboot on the instance'
