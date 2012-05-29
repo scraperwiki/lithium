@@ -9,6 +9,12 @@ client.call 'avail.LinodePlans',null, ->
 client.call 'avail.kernels',null, ->
 client.call 'avail.distributions',null, ->
 
+client.call 'linode.delete',
+  'LinodeID': 206912
+  'skipChecks': true
+  , ->
+
+#client.call 'linode.disk.createfromdistribution',
 #client.call 'linode.create',
 #  'DatacenterID': 7
 #  'PlanID': 1
@@ -17,11 +23,11 @@ client.call 'avail.distributions',null, ->
 #
 #client.call 'linode.list',null, ->
 
-client.call 'linode.list',
-  'LinodeID': 206097
-  'asdasdsad': 'asasda'
-  , ->
-
+#client.call 'linode.list',
+#  'LinodeID': 206097
+#  'asdasdsad': 'asasda'
+#  , ->
+#
 #client.call 'linode.update',
 #  'LinodeID': 206097
 #  'Label': 'test'
