@@ -2,7 +2,8 @@ LinodeClient = (require 'linode-api').LinodeClient
 _            = require('underscore')
 _s           = require('underscore.string')
 
-Instance = (require 'instance').Instance
+LithiumConfig = (require 'lithium_config').LithiumConfig
+Instance      = (require 'instance').Instance
 
 exports.Linode = class Linode extends Instance
   api_key = process.env['LINODE_API_KEY']
@@ -30,6 +31,7 @@ exports.Linode = class Linode extends Instance
                 'Label': 'system'
                 'Size': @config.disk_size * 1000 # magic for now
                 'rootPass': 'r00ter' # magic for now
+                'rootSSHKey': LithiumConfig.sshkey_public()
                 , (err, res) =>
                   @disk_id = res['DiskID']
                   @_get_kernel @config.kernel, (id) =>
