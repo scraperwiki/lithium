@@ -3,8 +3,11 @@
 cf     = require 'config'
 
 exports.Instance = class Instance
-  constructor: (config) ->
-    @config = new cf.Config config
+  constructor: (config, id, name, state) ->
+    @config = new cf.Config config if config?
+    @id = id if id?
+    @name = name if name?
+    @state = state if state?
 
   # Create a server ready to run. Somewhere on the internet.
   # Servers are created in the "stopped" state.
