@@ -43,6 +43,13 @@ exports.Linode = class Linode extends Instance
                       , (err, res) =>
                         callback()
 
+  @destroy: (name, callback) ->
+    @_get name, (instance) ->
+      client.call 'linode.delete',
+         'LinodeID': instance.id
+         'skipChecks': true
+         , (err, res) ->
+           callback()
 
   # Takes RAM as MB and disk as GB
   @_get_plan: (ram, disk, callback) ->

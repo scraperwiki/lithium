@@ -100,16 +100,28 @@ describe 'Linode Instance', ->
       list[0].id.should.equal 206097
       list[0].name.should.equal 'boxecutor_1'
 
+  describe 'when getting an instance from its name', ->
+    list_nock = nocks.list()
+    instance = null
+
+    before (done) ->
+      Linode._get 'boxecutor_1', (i) ->
+          instance = i
+          done()
+
+    it 'gets the instance from the name', ->
+      instance.id.should.equal 206097
+
   describe 'when destroying an instance', ->
+    delete_nock = nocks.delete()
     list_nock = nocks.list()
 
-    it 'gets the instance from the name', (done) ->
-      Linode._get 'boxecutor_1', (instance) ->
-        instance.id.should.equal 206097
-        done()
+    before (done) ->
+      Linode.destroy 'boxecutor_1', ->
+          done()
 
-    it 'shuts the instance down if running'
-    it 'calls linode.delete on the instance'
+    it 'calls linode.delete on the instance', ->
+      delete_nock.isDone().should.be.true
 
   describe 'when starting an instance', ->
     it 'gets the linodeid from the name'

@@ -289,3 +289,15 @@ exports.avail_kernels = ->
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
   connection: "keep-alive"
+
+exports.delete = ->
+  nock('https://api.linode.com')
+  .get('/?api_key=fakeapikey&api_action=linode.delete&LinodeID=206097&skipChecks=true')
+  .reply 200,
+  """
+  {"ERRORARRAY":[],"DATA":{"LinodeID":206097},"ACTION":"linode.delete"}
+  """,
+  date: "Tue, 29 May 2012 10:01:12 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"
