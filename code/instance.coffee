@@ -11,30 +11,30 @@ exports.Instance = class Instance
 
   # Create a server ready to run. Somewhere on the internet.
   # Servers are created in the "stopped" state.
-  @create: (config) ->
+  @create: (config, callback) ->
     @config = new cf.Config config
 
   # Destroy a previously created server.
-  @destroy: (instance) ->
+  @destroy: (instance, callback) ->
 
   # List instances in the cloud
-  @list: ->
+  @list: (callback) ->
 
   # Start the server. Immediately go into the 'starting' state,
   # and if everything goes okay, then sometime later it will be
   # in the 'running' state.
-  start: ->
+  start: (callback) ->
 
   # Stop the server. Immediately go into the 'stopping' state,
   # and if everything goes okay, then sometime later it will be
   # in the 'stopped' state.
-  stop: ->
+  stop: (callback) ->
 
   # Return the state of the server.  Will be one of:
   # 'stopped', 'running', 'starting', 'stopping', and probably
   # others.
-  state: ->
+  state: (callback) ->
 
   # Run a shell command as root on the server. Return stdout.
   # Throw stderr as an error on nonzero exit.
-  sh: -> (command) ->
+  sh: -> (command, callback) ->
