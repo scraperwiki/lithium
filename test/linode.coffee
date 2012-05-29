@@ -124,13 +124,18 @@ describe 'Linode Instance', ->
       delete_nock.isDone().should.be.true
 
   describe 'when starting an instance', ->
-    it 'gets the linodeid from the name'
-    it 'calls linode.boot on the instance'
+    boot_nock = nocks.boot()
+    list_nock = nocks.list()
+
+    it 'calls linode.boot on the instance', (done) ->
+      Linode._get 'boxecutor_1', (instance) ->
+        instance.start ->
+          boot_nock.isDone().should.be.true
+          done()
+
 
   describe 'when stopping an instance', ->
-    it 'gets the linodeid from the name'
     it 'calls linode.shutdown on the instance'
 
   describe 'when restarting an instance', ->
-    it 'gets the linodeid from the name'
     it 'calls linode.reboot on the instance'

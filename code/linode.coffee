@@ -51,6 +51,14 @@ exports.Linode = class Linode extends Instance
          , (err, res) ->
            callback()
 
+  start: (callback) ->
+    client.call 'linode.boot',
+      'LinodeID': @id
+      , (err, res) ->
+        callback()
+
+
+
   # Takes RAM as MB and disk as GB
   @_get_plan: (ram, disk, callback) ->
     client.call 'avail.LinodePlans', null, (err, res) ->
