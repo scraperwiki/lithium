@@ -135,7 +135,21 @@ describe 'Linode Instance', ->
 
 
   describe 'when stopping an instance', ->
-    it 'calls linode.shutdown on the instance'
+    shutdown_nock = nocks.shutdown()
+    list_nock = nocks.list()
+
+    it 'calls linode.shutdown on the instance', (done) ->
+      Linode._get 'boxecutor_1', (instance) ->
+        instance.stop ->
+          shutdown_nock.isDone().should.be.true
+          done()
 
   describe 'when restarting an instance', ->
-    it 'calls linode.reboot on the instance'
+    reboot_nock = nocks.reboot()
+    list_nock = nocks.list()
+
+    it 'calls linode.reboot on the instance', (done) ->
+      Linode._get 'boxecutor_1', (instance) ->
+        instance.restart ->
+          reboot_nock.isDone().should.be.true
+          done()

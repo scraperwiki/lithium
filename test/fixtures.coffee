@@ -139,7 +139,7 @@ exports.list = ->
 
 # Reboot
 exports.reboot = ->
-  nock('https://api.linode.com')
+  return nock('https://api.linode.com')
   .get('/?api_key=fakeapikey&api_action=linode.reboot&LinodeID=206097')
   .reply 200,
     """
