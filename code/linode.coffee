@@ -89,14 +89,14 @@ exports.Linode = class Linode extends Instance
       callback k['KERNELID']
 
   # Returns an array of instances, status should be a string?
-  @_list: (callback) ->
+  @list: (callback) ->
     client.call 'linode.list', null, (err, res) ->
       callback _.map res, (l) ->
         o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
         new Linode null, o.id, o.name, o.state
 
   @_get: (name, callback) ->
-    @_list (list) ->
+    @list (list) ->
       k = _.find list, (n) ->
         n.name == name
       callback new Linode null, k.id, k.name, k.state

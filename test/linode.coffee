@@ -86,7 +86,7 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
 
     before (done) ->
-      list = Linode._list (res) ->
+      list = Linode.list (res) ->
         list = res
         done()
 
