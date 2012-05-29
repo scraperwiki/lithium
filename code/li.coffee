@@ -1,5 +1,7 @@
 #!/usr/bin/env coffee
 
+_s = require 'underscore.string'
+
 Linode = (require 'linode').Linode
 
 help = (args) ->
@@ -45,6 +47,7 @@ exports.main = (args) ->
     when 'destroy' then destroy(args)
     when 'list' then list(args)
     when undefined then help(args)
-    else process.stderr.write("Try li help for help\n")
+    else process.stderr.write("Try li help for help, not #{args}\n")
 
-exports.main()
+if _s.endsWith process.argv[1], 'li.coffee'
+  exports.main()
