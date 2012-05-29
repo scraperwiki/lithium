@@ -9,10 +9,6 @@ describe 'li', ->
     mock = sinon.mock process.stdout
     mock.expects 'write'
 
-  it 'can call main with an empty list', ->
-    li.main([])
-    mock.verify()
-
   describe 'help', ->
     it 'offers help', ->
       li.main ['li', 'help']
