@@ -67,4 +67,11 @@ exports.Linode = class Linode extends Instance
   @_list: (callback) ->
     client.call 'linode.list', null, (err, res) ->
       callback _.map res, (l) ->
-        {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
+        o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
+        new Linode null, o.id, o.name, o.state
+
+  @_get: (name, callback) ->
+    @_list (list) ->
+      k = _.find list, (n) ->
+        n.name == name
+      callback new Linode null, k.id, k.name, k.state
