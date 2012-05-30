@@ -18,6 +18,16 @@ start = (args) ->
     instance.start ->
       process.stdout.write('started\n')
 
+stop = (args) ->
+  Linode._get args[2], (instance) ->
+    instance.stop ->
+      process.stdout.write('stopped\n')
+
+restart = (args) ->
+  Linode._get args[2], (instance) ->
+    instance.restart ->
+      process.stdout.write('restarted\n')
+
 create = (args) ->
   process.stdout.write('Creating...\n')
   Linode.create args[2], ->
@@ -43,6 +53,8 @@ exports.main = (args) ->
   switch args[1]
     when 'help' then help(args)
     when 'start' then start(args)
+    when 'stop' then stop(args)
+    when 'restart' then restart(args)
     when 'create' then create(args)
     when 'destroy' then destroy(args)
     when 'list' then list(args)
