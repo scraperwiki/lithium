@@ -28,7 +28,8 @@ exports.Linode = class Linode extends Instance
          , (err, res) ->
            callback()
 
-  # Returns an array of instances.
+  # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
+  # is a error, and *res* is an array of instances.
   @list: (callback) ->
     client.call 'linode.list', null, (err, res) ->
       callback err, (_.map res, (l) ->
@@ -37,7 +38,7 @@ exports.Linode = class Linode extends Instance
 
   # Returns an instance given its name.
   @get: (name, callback) ->
-    @list (list) ->
+    @list (err, list) ->
       k = _.find list, (n) ->
         n.name == name
       callback new Linode null, k.id, k.name, k.state
