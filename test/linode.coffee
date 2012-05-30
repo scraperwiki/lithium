@@ -105,7 +105,7 @@ describe 'Linode Instance', ->
     instance = null
 
     before (done) ->
-      Linode._get 'boxecutor_1', (i) ->
+      Linode.get 'boxecutor_1', (i) ->
           instance = i
           done()
 
@@ -128,7 +128,7 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
 
     it 'calls linode.boot on the instance', (done) ->
-      Linode._get 'boxecutor_1', (instance) ->
+      Linode.get 'boxecutor_1', (instance) ->
         instance.start ->
           boot_nock.isDone().should.be.true
           done()
@@ -139,7 +139,7 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
 
     it 'calls linode.shutdown on the instance', (done) ->
-      Linode._get 'boxecutor_1', (instance) ->
+      Linode.get 'boxecutor_1', (instance) ->
         instance.stop ->
           shutdown_nock.isDone().should.be.true
           done()
@@ -149,7 +149,7 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
 
     it 'calls linode.reboot on the instance', (done) ->
-      Linode._get 'boxecutor_1', (instance) ->
+      Linode.get 'boxecutor_1', (instance) ->
         instance.restart ->
           reboot_nock.isDone().should.be.true
           done()

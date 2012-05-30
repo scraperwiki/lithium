@@ -14,17 +14,17 @@ start = (args) ->
   # args[3] is the configuration of the server to start.
 
   # if args[2] is 'placebo' then throw 'foo'
-  Linode._get args[2], (instance) ->
+  Linode.get args[2], (instance) ->
     instance.start ->
       process.stdout.write('started\n')
 
 stop = (args) ->
-  Linode._get args[2], (instance) ->
+  Linode.get args[2], (instance) ->
     instance.stop ->
       process.stdout.write('stopped\n')
 
 restart = (args) ->
-  Linode._get args[2], (instance) ->
+  Linode.get args[2], (instance) ->
     instance.restart ->
       process.stdout.write('restarted\n')
 
