@@ -40,8 +40,11 @@ destroy = (args) ->
 
 list = (args) ->
   process.stdout.write "Listing instances...\n"
-  Linode.list (list) ->
-    console.log item for item in list
+  Linode.list (err, list) ->
+    if err?
+      console.log err
+    else
+      console.log item for item in list
 
 exports.main = (args) ->
   # If supplied *args* should be a list of arguments,
