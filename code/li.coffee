@@ -38,6 +38,13 @@ destroy = (args) ->
   Linode.destroy args[2], ->
     process.stdout.write "Possibly destroyed\n"
 
+sh = (args) ->
+  Linode.get args[2], (instance) ->
+    instance.sh (args[3..].join ' '), (e, out, err) ->
+      process.stdout.write out if out
+      process.stdout.write err if err
+      process.stdout.write e if e
+
 list = (args) ->
   process.stdout.write "Listing instances...\n"
   Linode.list (err, list) ->
@@ -61,6 +68,7 @@ exports.main = (args) ->
     when 'create' then create(args)
     when 'destroy' then destroy(args)
     when 'list' then list(args)
+    when 'sh' then sh(args)
     when undefined then help(args)
     else process.stderr.write("Try li help for help, not #{args}\n")
 
