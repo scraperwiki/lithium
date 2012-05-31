@@ -84,6 +84,8 @@ describe 'Linode Instance', ->
   describe 'when listing instances', ->
     list = null
     list_nock = nocks.list()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
 
     before (done) ->
       Linode.list (err, res) ->
@@ -102,19 +104,38 @@ describe 'Linode Instance', ->
 
   describe 'when getting an instance from its name', ->
     list_nock = nocks.list()
+    list_ip_specific = nocks.list_ip_specific()
+    nocks.list_ip_specific2()
     instance = null
 
     before (done) ->
       Linode.get 'boxecutor_1', (i) ->
-          instance = i
-          done()
+        instance = i
+        done()
 
     it 'gets the instance from the name', ->
       instance.id.should.equal 206097
 
+  describe 'when getting an ip address from its linode id', ->
+    list_ip_specific = nocks.list_ip_specific()
+    ip_address = null
+
+    before (done) ->
+      Linode._get_ip 206097, (i) ->
+          ip_address = i
+          done()
+
+    it 'calls linode.list on a specific linodeid', ->
+      list_ip_specific.isDone().should.be.true
+
+    it 'gets the instance from the name', ->
+      ip_address.should.equal '176.58.105.104'
+
   describe 'when destroying an instance', ->
     delete_nock = nocks.delete()
     list_nock = nocks.list()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
 
     before (done) ->
       Linode.destroy 'boxecutor_1', ->
@@ -126,6 +147,8 @@ describe 'Linode Instance', ->
   describe 'when starting an instance', ->
     boot_nock = nocks.boot()
     list_nock = nocks.list()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
 
     it 'calls linode.boot on the instance', (done) ->
       Linode.get 'boxecutor_1', (instance) ->
@@ -137,6 +160,8 @@ describe 'Linode Instance', ->
   describe 'when stopping an instance', ->
     shutdown_nock = nocks.shutdown()
     list_nock = nocks.list()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
 
     it 'calls linode.shutdown on the instance', (done) ->
       Linode.get 'boxecutor_1', (instance) ->
@@ -147,6 +172,8 @@ describe 'Linode Instance', ->
   describe 'when restarting an instance', ->
     reboot_nock = nocks.reboot()
     list_nock = nocks.list()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
 
     it 'calls linode.reboot on the instance', (done) ->
       Linode.get 'boxecutor_1', (instance) ->

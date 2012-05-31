@@ -1,9 +1,27 @@
 nock = require 'nock'
 
 # List details of a specific linode
-exports.list_specific = ->
+exports.list_ip_specific = ->
   nock('https://api.linode.com')
   .get('/?api_key=fakeapikey&api_action=linode.ip.list&LinodeID=206097')
+  .reply 200,
+    """
+    { "ERRORARRAY":[],
+      "DATA":[
+          {"IPADDRESSID":133212,"RDNS_NAME":"li463-104.members.linode.com",
+          "LINODEID":206097,"ISPUBLIC":1,"IPADDRESS":"176.58.105.104"}
+          ],
+      "ACTION":"linode.ip.list" }
+    """,
+    date: 'Fri, 25 May 2012 09:47:40 GMT'
+    'content-type': 'text/html; charset=UTF-8'
+    'transfer-encoding': 'chunked'
+    connection: 'keep-alive'
+
+# List details of a specific linode
+exports.list_ip_specific2 = ->
+  nock('https://api.linode.com')
+  .get('/?api_key=fakeapikey&api_action=linode.ip.list&LinodeID=206102')
   .reply 200,
     """
     { "ERRORARRAY":[],

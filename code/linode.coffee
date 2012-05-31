@@ -31,17 +31,20 @@ exports.Linode = class Linode extends Instance
   # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
   # is a error, and *res* is an array of instances.
   @list: (callback) ->
-    client.call 'linode.list', null, (err, res) ->
-      callback err, (_.map res, (l) ->
+    client.call 'linode.list', null, (err, res) =>
+      list = _.map res, (l) =>
         o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
-        new Linode null, o.id, o.name, o.state)
+        new Linode null, o.id, o.name, o.state
+      @amap ((x, cb) =>
+        @_get_ip x.id, (ip) => x.ip_address = ip; cb x),
+        list, (x) -> callback err, x
 
   # Returns an instance given its name.
   @get: (name, callback) ->
     @list (err, list) ->
       k = _.find list, (n) ->
         n.name == name
-      callback new Linode null, k.id, k.name, k.state
+      callback k
 
   start: (callback) ->
     client.call 'linode.boot',
@@ -129,3 +132,16 @@ exports.Linode = class Linode extends Instance
       k = _.find res, (kernel) ->
         _s.contains kernel['LABEL'], version
       callback k['KERNELID']
+
+  @_get_ip: (linode_id, callback) ->
+   client.call 'linode.ip.list',
+     'LinodeID': linode_id
+     , (err, res) ->
+       callback res[0]['IPADDRESS']
+
+  @amap: (f,l,cb,r) =>
+    if l.length == 0
+      cb r
+    else
+      f l[0], (x) =>
+        @amap f, l[1..], cb, (if !r? then [] else r).concat [x]

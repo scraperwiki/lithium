@@ -3,11 +3,12 @@
 cf     = require 'config'
 
 exports.Instance = class Instance
-  constructor: (config, id, name, state) ->
+  constructor: (config, id, name, state, ip) ->
     @config = new cf.Config config if config?
     @id = id if id?
     @name = name if name?
     @state = state if state?
+    @ip_address = ip if ip?
 
   # Create a server ready to run. Somewhere on the internet.
   # Servers are created in the "stopped" state.
@@ -37,4 +38,4 @@ exports.Instance = class Instance
 
   # Run a shell command as root on the server. Return stdout.
   # Throw stderr as an error on nonzero exit.
-  sh: -> (command, callback) ->
+  sh: (command, callback) ->
