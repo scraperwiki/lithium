@@ -1,6 +1,9 @@
 #
 # Instance interface.
-cf     = require 'config'
+exec          = require('child_process').exec
+
+cf            = require 'config'
+LithiumConfig = require('lithium_config').LithiumConfig
 
 exports.Instance = class Instance
   constructor: (config, id, name, state, ip) ->
@@ -39,3 +42,9 @@ exports.Instance = class Instance
   # Run a shell command as root on the server. Return stdout.
   # Throw stderr as an error on nonzero exit.
   sh: (command, callback) ->
+    @_ssh LithiumConfig.sshkey_private, command, callback
+
+  # Connect via SSH and execute command
+  _ssh: (key, command, callback) ->
+    cmd = "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i #{key} root@#{@ip_address} '#{command}'"
+    exec cmd, callback
