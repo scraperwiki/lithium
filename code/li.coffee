@@ -40,10 +40,11 @@ destroy = (args) ->
 
 sh = (args) ->
   Linode.get args[2], (instance) ->
-    instance.sh (args[3..].join ' '), (e, out, err) ->
-      process.stdout.write out if out
-      process.stdout.write err if err
-      process.stdout.write e if e
+    callbacks =
+      stdout: (data) -> process.stdout.write data
+      stderr: (data) -> process.stderr.write data
+      exit: (code) -> console.log "Exit code: #{code}"
+    instance.sh (args[3..].join ' '), callbacks
 
 list = (args) ->
   process.stdout.write "Listing instances...\n"

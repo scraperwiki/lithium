@@ -1,6 +1,6 @@
 #
 # Instance interface.
-exec          = require('child_process').exec
+spawn         = require('child_process').spawn
 
 cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
@@ -41,10 +41,16 @@ exports.Instance = class Instance
 
   # Run a shell command as root on the server. Return stdout.
   # Throw stderr as an error on nonzero exit.
-  sh: (command, callback) ->
-    @_ssh LithiumConfig.sshkey_private, command, callback
+  sh: (command, callbacks) ->
+    @_ssh LithiumConfig.sshkey_private, command, callbacks
 
   # Connect via SSH and execute command
-  _ssh: (key, command, callback) ->
-    cmd = "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i #{key} root@#{@ip_address} '#{command}'"
-    exec cmd, callback
+  _ssh: (key, command, callbacks) ->
+    args = [
+      '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
+    args = args.concat(command.split ' ')
+
+    ssh = spawn 'ssh', args
+    ssh.stdout.on 'data', callbacks.stdout
+    ssh.stderr.on 'data', callbacks.stderr
+    ssh.on 'exit', callbacks.exit

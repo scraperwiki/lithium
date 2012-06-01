@@ -12,6 +12,11 @@ describe 'Instance', ->
 
     it 'calls ssh', ->
       i = new Instance
+      callbacks =
+        stdout: ->
+        stderr: ->
+        exit: ->
+
       sinon.spy i, '_ssh'
-      i.sh 'cat /etc/passwd'
+      i.sh 'cat /etc/passwd', callbacks
       i._ssh.calledOnce.should.be.true
