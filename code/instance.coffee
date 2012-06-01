@@ -1,6 +1,7 @@
 #
 # Instance interface.
 spawn         = require('child_process').spawn
+net           = require 'net'
 
 cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
@@ -46,6 +47,7 @@ exports.Instance = class Instance
 
   # Connect via SSH and execute command
   _ssh: (key, command, callbacks) ->
+    @_wait_for_sshd()
     args = [
       '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
     args = args.concat(command.split ' ')
@@ -54,3 +56,14 @@ exports.Instance = class Instance
     ssh.stdout.on 'data', callbacks.stdout
     ssh.stderr.on 'data', callbacks.stderr
     ssh.on 'exit', callbacks.exit
+
+  # Wait until we can connect to port 22 of instance
+  _wait_for_sshd: ->
+    f = =>
+        client = net.connect 22, @ip_address, ->
+          setTimeout ->
+            clearInterval int
+          , 3000
+        client._handle.socket.destroy()
+
+    int = setInterval f, 1000
