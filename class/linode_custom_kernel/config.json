@@ -1,0 +1,5 @@
+{
+    "include"       : "vanilla",
+    "name"          : "linode_custom_kernel",
+    "description"   : "Linode server with a custom kernel"
+}
