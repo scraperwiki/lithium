@@ -40,10 +40,15 @@ exports.Instance = class Instance
   # others.
   state: (callback) ->
 
-  # Run a shell command as root on the server. Return stdout.
-  # Throw stderr as an error on nonzero exit.
+  # Run a shell command as root on the server.
   sh: (command, callbacks) ->
     @_ssh LithiumConfig.sshkey_private, command, callbacks
+
+  # Copy files to the instance
+  cp: (files, callbacks) ->
+    @_scp LithiumConfig.sshkey_private, files, callbacks
+
+  #### Private methods ####
 
   # Connect via SSH and execute command
   _ssh: (key, command, callbacks) ->
@@ -53,6 +58,20 @@ exports.Instance = class Instance
     args = args.concat(command.split ' ')
 
     ssh = spawn 'ssh', args
+    ssh.stdout.on 'data', callbacks.stdout
+    ssh.stderr.on 'data', callbacks.stderr
+    ssh.on 'exit', callbacks.exit
+
+  # Copy files via SCP
+  # TODO: factor out into SSH & SCP class
+  _scp: (key, files, callbacks) ->
+    @_wait_for_sshd()
+    args = [
+      '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key ]
+    args = args.concat files
+    args.push "root@#{@ip_address}:/root"
+
+    ssh = spawn 'scp', args
     ssh.stdout.on 'data', callbacks.stdout
     ssh.stderr.on 'data', callbacks.stderr
     ssh.on 'exit', callbacks.exit

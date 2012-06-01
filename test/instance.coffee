@@ -20,3 +20,16 @@ describe 'Instance', ->
       sinon.spy i, '_ssh'
       i.sh 'cat /etc/passwd', callbacks
       i._ssh.calledOnce.should.be.true
+
+  describe 'cp (copy a file)', ->
+
+    it 'calls scp', ->
+      i = new Instance
+      callbacks =
+        stdout: ->
+        stderr: ->
+        exit: ->
+
+      sinon.spy i, '_scp'
+      i.cp 'cat /etc/passwd', callbacks
+      i._scp.calledOnce.should.be.true
