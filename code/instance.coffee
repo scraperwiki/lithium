@@ -3,6 +3,8 @@
 spawn         = require('child_process').spawn
 net           = require 'net'
 
+_             = require 'underscore'
+
 cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
 
@@ -48,6 +50,24 @@ exports.Instance = class Instance
   cp: (files, callbacks) ->
     @_scp LithiumConfig.sshkey_private, files, callbacks
 
+  # Copy & run hooks on instance
+  # TODO: coupled
+  run_hooks: ->
+    callbacks =
+      stdout: (data) -> console.log data
+      stderr: (data) -> console.log data
+      exit: (code) -> console.log code
+
+    files_to_cp = _.map @config.hooks, (hook) =>
+      "classes/#{@config.name}/hooks/#{hook}" if /\d+_.+\.r\..+/.test hook
+
+    @cp files_to_cp, callbacks
+    _.each @config.hooks, (hook) =>
+      if /\d+_.+\.r\..+/.test hook
+        @sh "sh /root/#{hook}", callbacks
+      if /\d+_.+\.l\..+/.test hook
+        @_local_sh "sh classes/#{@config.name}/#{hook}", callbacks
+
   #### Private methods ####
 
   # Connect via SSH and execute command
@@ -86,3 +106,11 @@ exports.Instance = class Instance
         client._handle.socket.destroy()
 
     int = setInterval f, 1000
+
+  # Spawn a command locally
+  # TODO: put somewhere more sane
+  _local_sh: (command, callbacks) ->
+    cmd = spawn 'sh', command.split ' '
+    cmd.stdout.on 'data', callbacks.stdout
+    cmd.stderr.on 'data', callbacks.stderr
+    cmd.on 'exit', callbacks.exit
