@@ -4,6 +4,7 @@ spawn         = require('child_process').spawn
 net           = require 'net'
 
 _             = require 'underscore'
+async         = require 'async'
 
 cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
@@ -24,6 +25,9 @@ exports.Instance = class Instance
   # Destroy a previously created server.
   @destroy: (instance, callback) ->
 
+  # Get an instance by name
+  @get: (name, callback) ->
+
   # List instances in the cloud
   @list: (callback) ->
 
@@ -43,48 +47,52 @@ exports.Instance = class Instance
   state: (callback) ->
 
   # Run a shell command as root on the server.
-  sh: (command, callbacks) ->
-    @_ssh LithiumConfig.sshkey_private, command, callbacks
+  sh: (command, callback) ->
+    @_ssh LithiumConfig.sshkey_private, command, callback
 
   # Copy files to the instance
-  cp: (files, callbacks) ->
-    @_scp LithiumConfig.sshkey_private, files, callbacks
+  cp: (files, callback) ->
+    @_scp LithiumConfig.sshkey_private, files, callback
 
   # Copy & run hooks on instance
   # TODO: coupled
-  run_hooks: ->
-    callbacks =
-      stdout: (data) -> console.log data
-      stderr: (data) -> console.log data
-      exit: (code) -> console.log code
+  run_hooks: (callback) ->
+    files_to_cp = _.select @config.hooks, (hook) ->
+      /\d+_.+\.r\.\w/.test hook
 
-    files_to_cp = _.map @config.hooks, (hook) =>
-      "classes/#{@config.name}/hooks/#{hook}" if /\d+_.+\.r\..+/.test hook
+    files_to_cp = _.map files_to_cp, (f) =>
+      "class/#{@config.name}/hooks/#{f}"
 
-    @cp files_to_cp, callbacks
-    _.each @config.hooks, (hook) =>
-      if /\d+_.+\.r\..+/.test hook
-        @sh "sh /root/#{hook}", callbacks
-      if /\d+_.+\.l\..+/.test hook
-        @_local_sh "sh classes/#{@config.name}/#{hook}", callbacks
+    @cp files_to_cp, (exit_code) =>
+      console.log "cp exit code: #{exit_code}"
+      async.forEachSeries @config.hooks, @_call_hook, callback
+
 
   #### Private methods ####
 
+  _call_hook: (hook, callback) =>
+    console.log "Running #{hook}"
+    if /\d+_.+\.r\..+/.test hook
+      @sh "sh /root/#{hook}", callback
+    if /\d+_.+\.l\..+/.test hook
+      @_local_sh "class/#{@config.name}/hooks/#{hook}", callback
+
   # Connect via SSH and execute command
-  _ssh: (key, command, callbacks) ->
+  # TODO: proper callbacks?
+  _ssh: (key, command, callback) ->
     @_wait_for_sshd()
     args = [
       '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
     args = args.concat(command.split ' ')
 
     ssh = spawn 'ssh', args
-    ssh.stdout.on 'data', callbacks.stdout
-    ssh.stderr.on 'data', callbacks.stderr
-    ssh.on 'exit', callbacks.exit
+    ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+    ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+    ssh.on 'exit', callback
 
   # Copy files via SCP
-  # TODO: factor out into SSH & SCP class
-  _scp: (key, files, callbacks) ->
+  # TODO: factor out into SSH & SCP class, proper callbacks?
+  _scp: (key, files, callback) ->
     @_wait_for_sshd()
     args = [
       '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key ]
@@ -92,9 +100,9 @@ exports.Instance = class Instance
     args.push "root@#{@ip_address}:/root"
 
     ssh = spawn 'scp', args
-    ssh.stdout.on 'data', callbacks.stdout
-    ssh.stderr.on 'data', callbacks.stderr
-    ssh.on 'exit', callbacks.exit
+    ssh.stdout.on 'data', (data) -> console.log data.toString('ascii')
+    ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
+    ssh.on 'exit', callback
 
   # Wait until we can connect to port 22 of instance
   _wait_for_sshd: ->
@@ -107,10 +115,10 @@ exports.Instance = class Instance
 
     int = setInterval f, 1000
 
-  # Spawn a command locally
-  # TODO: put somewhere more sane
-  _local_sh: (command, callbacks) ->
-    cmd = spawn 'sh', command.split ' '
-    cmd.stdout.on 'data', callbacks.stdout
-    cmd.stderr.on 'data', callbacks.stderr
-    cmd.on 'exit', callbacks.exit
+  # Spawn a command locally, needs to be executable
+  # TODO: put somewhere more sane, name it properly: exec?
+  _local_sh: (command, callback) ->
+    cmd = spawn command, []
+    cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
+    cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
+    cmd.on 'exit', callback
