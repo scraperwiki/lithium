@@ -40,11 +40,18 @@ destroy = (args) ->
 
 sh = (args) ->
   Linode.get args[2], (instance) ->
-    callbacks =
-      stdout: (data) -> process.stdout.write data
-      stderr: (data) -> process.stderr.write data
-      exit: (code) -> console.log "Exit code: #{code}"
-    instance.sh (args[3..].join ' '), callbacks
+    callback = (code) ->
+        console.log "Exit code: #{code}"
+        process.exit code
+
+    instance.sh (args[3..].join ' '), callback
+
+deploy = (args) ->
+  Linode.get args[2], (instance) ->
+    callback = (code) ->
+        console.log "Exit code: #{code}"
+        process.exit code
+    instance.run_hooks callback
 
 list = (args) ->
   process.stdout.write "Listing instances...\n"
@@ -70,6 +77,7 @@ exports.main = (args) ->
     when 'destroy' then destroy(args)
     when 'list' then list(args)
     when 'sh' then sh(args)
+    when 'deploy' then deploy(args)
     when undefined then help(args)
     else process.stderr.write("Try li help for help, not #{args}\n")
 
