@@ -1,4 +1,6 @@
 should  = require 'should'
+sinon = require 'sinon'
+_ = require 'underscore'
 
 nocks = require './fixtures'
 
@@ -61,6 +63,7 @@ describe 'Linode Instance', ->
     distro_nock = nocks.avail_distro()
     create_config_nock = nocks.create_config()
     kernel_nock = nocks.avail_kernels()
+    nocks.linode_fresh()
 
     before (done) ->
       linode = Linode.create 'boxecutor', (res) ->
@@ -80,6 +83,33 @@ describe 'Linode Instance', ->
 
     it 'calls linode.config.create to set up a Linode config', ->
       create_config_nock.isDone().should.be.true
+
+  describe 'when creating a second instance with the boxecutor config', ->
+    last_call = null
+    linode = null
+    err_from_create = null
+    plan_nock = nocks.plans()
+    create_nock = nocks.create()
+    update_nock = nocks.linode_update()
+    create_distro_nock = nocks.create_dist_disk()
+    distro_nock = nocks.avail_distro()
+    create_config_nock = nocks.create_config()
+    kernel_nock = nocks.avail_kernels()
+    nocks.linode_fresh()
+
+    before (done) ->
+      spy = sinon.spy Linode.client, 'call'
+      Linode.create 'boxecutor', (err, res) ->
+        linode = res
+        err_from_create = err
+        # Find the last call to linode.update
+        us = _.filter spy.args, (x) -> x[0] == 'linode.update'
+        last_call = us[us.length-1]
+        done()
+
+    it 'has the right name', ->
+      linode.name.should.match /^boxecutor/
+      last_call[1].Label.should.equal 'boxecutor_1'
 
   describe 'when listing instances', ->
     list = null
@@ -142,7 +172,7 @@ describe 'Linode Instance', ->
 
     before (done) ->
       Linode.destroy 'boxecutor_1', ->
-          done()
+        done()
 
     it 'calls linode.delete on the instance', ->
       delete_nock.isDone().should.be.true
@@ -165,6 +195,10 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
     nocks.list_ip_specific()
     nocks.list_ip_specific2()
+
+    before (done) ->
+       nocks.list()
+       done()
 
     it 'calls linode.shutdown on the instance', (done) ->
       Linode.get 'boxecutor_1', (instance) ->

@@ -191,6 +191,7 @@ exports.shutdown = ->
 # Linode update
 exports.linode_update = ->
   return nock('https://api.linode.com')
+  .filteringPath(/Label=[^&]*/, 'Label=boxecutor')
   .get('/?api_key=fakeapikey&api_action=linode.update&LinodeID=206102&Label=boxecutor')
   .reply 200,
    """
@@ -200,6 +201,33 @@ exports.linode_update = ->
    }
    """,
   date: 'Fri, 25 May 2012 09:55:42 GMT'
+  'content-type': 'text/html; charset=UTF-8'
+  'transfer-encoding': 'chunked'
+  connection: 'keep-alive'
+
+exports.linode_fresh = ->
+  nock('https://api.linode.com')
+  # 206102 must match the LinodeID returned in the call to linode.create.
+  .get('/?api_key=fakeapikey&api_action=linode.list&LinodeID=206102')
+  .reply 200,
+    """
+    { "ERRORARRAY":[],
+      "DATA":
+        [
+          {"ALERT_CPU_ENABLED":1,"ALERT_BWIN_ENABLED":1,
+           "BACKUPSENABLED":0,"ALERT_CPU_THRESHOLD":90,
+           "ALERT_BWQUOTA_ENABLED":1,"LABEL":"boxecutor_2",
+           "ALERT_DISKIO_THRESHOLD":1000,"BACKUPWEEKLYDAY":0,
+           "BACKUPWINDOW":0,"WATCHDOG":1,"DATACENTERID":7,"STATUS":0,
+           "ALERT_DISKIO_ENABLED":1,"TOTALHD":20480,"LPM_DISPLAYGROUP":"",
+           "TOTALXFER":200,"ALERT_BWQUOTA_THRESHOLD":80,"TOTALRAM":512,
+           "LINODEID":206102,"ALERT_BWIN_THRESHOLD":5,
+           "ALERT_BWOUT_THRESHOLD":5,"ALERT_BWOUT_ENABLED":1}
+         ],
+      "ACTION":"linode.list"
+    }
+    """,
+  date: 'Fri, 25 May 2012 10:04:00 GMT'
   'content-type': 'text/html; charset=UTF-8'
   'transfer-encoding': 'chunked'
   connection: 'keep-alive'
