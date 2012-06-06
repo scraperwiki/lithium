@@ -38,8 +38,12 @@ describe 'Instance', ->
 
   describe 'run_hooks (run all hooks associated with config)', ->
     beforeEach (done) ->
+      sinon.stub console, 'log'
       i.run_hooks ->
         done()
+
+    afterEach ->
+      console.log.restore()
 
     it 'scps remote hooks to instance', ->
       i._scp.calledOnce.should.be.true

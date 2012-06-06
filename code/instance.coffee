@@ -63,7 +63,6 @@ exports.Instance = class Instance
     files_to_cp = _.map files_to_cp, (f) =>
       "class/#{@config.name}/hooks/#{f}"
     @cp files_to_cp, (exit_code) =>
-      console.log "cp exit code: #{exit_code}"
       return if exit_code > 0
 
     async.forEachSeries @config.hooks, @_call_hook, callback
