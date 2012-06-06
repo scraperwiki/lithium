@@ -58,23 +58,24 @@ exports.Instance = class Instance
   # TODO: coupled
   run_hooks: (callback) ->
     files_to_cp = _.select @config.hooks, (hook) ->
-      /\d+_.+\.r\.\w/.test hook
+      /^\d+_.+\.r\.\w/.test hook
 
     files_to_cp = _.map files_to_cp, (f) =>
       "class/#{@config.name}/hooks/#{f}"
-
     @cp files_to_cp, (exit_code) =>
       console.log "cp exit code: #{exit_code}"
-      async.forEachSeries @config.hooks, @_call_hook, callback
+      return if exit_code > 0
+
+    async.forEachSeries @config.hooks, @_call_hook, callback
 
 
   #### Private methods ####
 
   _call_hook: (hook, callback) =>
     console.log "Running #{hook}"
-    if /\d+_.+\.r\..+/.test hook
+    if /^\d+_.+\.r\.\w/.test hook
       @sh "sh /root/#{hook}", callback
-    if /\d+_.+\.l\..+/.test hook
+    if /^\d+_.+\.l\.\w/.test hook
       @_local_sh "class/#{@config.name}/hooks/#{hook}", callback
 
   # Connect via SSH and execute command

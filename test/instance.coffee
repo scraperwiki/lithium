@@ -5,19 +5,16 @@ Instance = require('instance').Instance
 LithiumConfig = require('lithium_config').LithiumConfig
 
 describe 'Instance', ->
-  [i, callbacks] = [null, null]
+  [i, callback] = [null, null]
 
   beforeEach ->
     i = new Instance 'linode_custom_kernel'
 
-    callbacks =
-      stdout: ->
-      stderr: ->
-      exit: ->
+    callback = ->
 
-    sinon.stub i, '_scp'
-    sinon.stub i, '_ssh'
-    sinon.stub i, '_local_sh'
+    sinon.stub i, '_scp', (_a, _b, cb) -> cb()
+    sinon.stub i, '_ssh', (_a, _b, cb) -> cb()
+    sinon.stub i, '_local_sh',  (_a, cb) -> cb()
 
   afterEach ->
     i._scp.restore()
@@ -31,17 +28,18 @@ describe 'Instance', ->
       key.length.should.be.above 1
 
     it 'calls ssh', ->
-      i.sh 'cat /etc/passwd', callbacks
+      i.sh 'cat /etc/passwd', callback
       i._ssh.calledOnce.should.be.true
 
   describe 'cp (copy a file)', ->
     it 'calls scp', ->
-      i.cp 'cat /etc/passwd', callbacks
+      i.cp 'cat /etc/passwd', callback
       i._scp.calledOnce.should.be.true
 
   describe 'run_hooks (run all hooks associated with config)', ->
-    beforeEach ->
-      i.run_hooks()
+    beforeEach (done) ->
+      i.run_hooks ->
+        done()
 
     it 'scps remote hooks to instance', ->
       i._scp.calledOnce.should.be.true

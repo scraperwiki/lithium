@@ -24,5 +24,5 @@ exports.Config = class Config
     return unless path.existsSync hooks_dir
     files = fs.readdirSync hooks_dir
     @hooks = (_.select files, (f) ->
-      /\d+_.+\.(l|r).+/.test f
+      /^\d+_.+\.(l|r)\.\w/.test f
     ).sort()

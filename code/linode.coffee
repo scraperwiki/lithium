@@ -34,7 +34,8 @@ exports.Linode = class Linode extends Instance
     client.call 'linode.list', null, (err, res) =>
       list = _.map res, (l) =>
         o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
-        new Linode null, o.id, o.name, o.state
+        # disgusting magic value
+        new Linode 'linode_custom_kernel', o.id, o.name, o.state
       @amap ((x, cb) =>
         @_get_ip x.id, (ip) => x.ip_address = ip; cb x),
         list, (x) -> callback err, x
