@@ -98,9 +98,12 @@ describe 'Linode Instance', ->
     it 'outputs an array of instances and their states & IDs', ->
       list.should.be.an.instanceof Array
       list.length.should.equal 2
+
+    it 'sets the instance members correctly', ->
       list[0].state.should.equal 1
       list[0].id.should.equal 206097
       list[0].name.should.equal 'boxecutor_1'
+      list[0].config.name.should.equal 'boxecutor'
 
   describe 'when getting an instance from its name', ->
     list_nock = nocks.list()

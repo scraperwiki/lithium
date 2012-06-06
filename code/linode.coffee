@@ -32,10 +32,7 @@ exports.Linode = class Linode extends Instance
   # is a error, and *res* is an array of instances.
   @list: (callback) ->
     client.call 'linode.list', null, (err, res) =>
-      list = _.map res, (l) =>
-        o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
-        # disgusting magic value
-        new Linode 'linode_custom_kernel', o.id, o.name, o.state
+      list = _.map res, _convert_to_instance
       @amap ((x, cb) =>
         @_get_ip x.id, (ip) => x.ip_address = ip; cb x),
         list, (x) -> callback err, x
@@ -146,3 +143,12 @@ exports.Linode = class Linode extends Instance
     else
       f l[0], (x) =>
         @amap f, l[1..], cb, (if !r? then [] else r).concat [x]
+
+# Convert the Linode API JSON representation for a linode server
+# into an instance of the Linode class.
+_convert_to_instance = (l) =>
+  o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
+  # The config is derived from the name, by removing the "_1"
+  # bit at the end.
+  config = o.name.replace /_\d+$/, ''
+  new Linode config, o.id, o.name, o.state
