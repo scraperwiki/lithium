@@ -65,29 +65,31 @@ exports.Instance = class Instance
       c = c.parent
 
     configs = all_parents.concat @config
+    configs = _.select configs, (c) -> c.hooks.length > 0
     async.forEachSeries configs, @run_config_hooks, callback
 
   run_config_hooks: (config, callback) =>
+    console.log "Running hooks for #{config.name}"
     files_to_cp = _.select config.hooks, (hook) ->
       /^\d+_.+\.r\.\w/.test hook
 
     files_to_cp = _.map files_to_cp, (f) =>
       "class/#{config.name}/hooks/#{f}"
     @cp files_to_cp, (exit_code) =>
-      return if exit_code > 0
-
-    async.forEachSeries config.hooks, @_call_hook, callback
+      callback if exit_code > 0
+      hooks = _.map config.hooks, (h) ->
+        {config_name: config.name, file: h}
+      async.forEachSeries hooks, @_call_hook, callback
 
 
   #### Private methods ####
 
   _call_hook: (hook, callback) =>
-    console.log "Running #{hook}"
-    if /^\d+_.+\.r\.\w/.test hook
-      @sh "sh /root/#{hook}", callback
-    if /^\d+_.+\.l\.\w/.test hook
-      # won't work properly
-      @_local_sh "class/#{@config.name}/hooks/#{hook}", callback
+    console.log "Running #{hook.file}"
+    if /^\d+_.+\.r\.\w/.test hook.file
+      @sh "sh /root/#{hook.file}", callback
+    if /^\d+_.+\.l\.\w/.test hook.file
+      @_local_sh "class/#{hook.config_name}/hooks/#{hook.file}", callback
 
   # Connect via SSH and execute command
   # TODO: proper callbacks?
