@@ -4,9 +4,10 @@ _    = require 'underscore'
 
 exports.Config = class Config
   hooks: []
+  parent: null
 
   constructor: (name) ->
-    @_load_config(name)
+    @_load_config name
     @_load_hooks()
     @
 
@@ -15,7 +16,9 @@ exports.Config = class Config
     text = fs.readFileSync "class/#{name}/config.json"
     config = JSON.parse text
     if config.include?
+      @parent = new Config config.include unless @parent?
       @_load_config config.include
+
     for key, value of config
       do (key, value) =>
         @[key] = value if key isnt 'include'
