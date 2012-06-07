@@ -1,5 +1,4 @@
 {
-    "include"       : "vanilla",
     "include"       : "linode_custom_kernel",
     "name"          : "boxecutor",
     "description"   : "Box execution server"
