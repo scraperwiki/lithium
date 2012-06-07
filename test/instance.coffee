@@ -8,7 +8,7 @@ describe 'Instance', ->
   [i, callback] = [null, null]
 
   beforeEach ->
-    i = new Instance 'linode_custom_kernel'
+    i = new Instance 'boxecutor'
 
     callback = ->
 
@@ -46,12 +46,20 @@ describe 'Instance', ->
       console.log.restore()
 
     it 'scps remote hooks to instance', ->
-      i._scp.calledOnce.should.be.true
+      i._scp.calledTwice.should.be.true
 
     it 'uses ssh to exec remote hooks', ->
-      i._ssh.calledTwice.should.be.true
+      i._ssh.calledThrice.should.be.true
 
     it 'execs local hooks locally', ->
       i._local_sh.calledTwice.should.be.true
 
-    it 'execs hooks of superest superclass'
+    it 'execs hooks of superconfigs', ->
+      hooks = i._all_hooks()
+      hooks.should.include '010_install_pam_chroot.r.sh'
+      hooks.should.include '010_install_custom_kernel.r.sh'
+      hooks.should.include '040_check_kernel_version.r.sh'
+      hooks.should.include '020_update_linode_config.l.coffee'
+      hooks.should.include '030_reboot_instance.l.sh'
+      
+

@@ -52,20 +52,31 @@ exports.Instance = class Instance
 
   # Copy files to the instance
   cp: (files, callback) ->
-    @_scp LithiumConfig.sshkey_private, files, callback
+    if files.length > 0
+      @_scp LithiumConfig.sshkey_private, files, callback
+    else callback
 
   # Copy & run hooks on instance
   # TODO: coupled
+  # TODO: we don't actually test this
   run_hooks: (callback) ->
-    files_to_cp = _.select @config.hooks, (hook) ->
+    c = @config
+    all_parents = while c.parent?
+      c = c.parent
+
+    configs = all_parents.concat @config
+    async.forEachSeries configs, @run_config_hooks, callback
+
+  run_config_hooks: (config, callback) =>
+    files_to_cp = _.select config.hooks, (hook) ->
       /^\d+_.+\.r\.\w/.test hook
 
     files_to_cp = _.map files_to_cp, (f) =>
-      "class/#{@config.name}/hooks/#{f}"
+      "class/#{config.name}/hooks/#{f}"
     @cp files_to_cp, (exit_code) =>
       return if exit_code > 0
 
-    async.forEachSeries @config.hooks, @_call_hook, callback
+    async.forEachSeries config.hooks, @_call_hook, callback
 
 
   #### Private methods ####
@@ -75,6 +86,7 @@ exports.Instance = class Instance
     if /^\d+_.+\.r\.\w/.test hook
       @sh "sh /root/#{hook}", callback
     if /^\d+_.+\.l\.\w/.test hook
+      # won't work properly
       @_local_sh "class/#{@config.name}/hooks/#{hook}", callback
 
   # Connect via SSH and execute command
@@ -122,3 +134,10 @@ exports.Instance = class Instance
     cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
     cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
     cmd.on 'exit', callback
+
+  _all_hooks: ->
+    c = @config
+    all_parent_hooks = while c.parent?
+      c = c.parent
+      c.hooks
+    _.flatten all_parent_hooks.concat @config.hooks
