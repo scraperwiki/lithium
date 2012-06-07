@@ -43,6 +43,7 @@ exports.Linode = class Linode extends Instance
     @list (err, list) ->
       k = _.find list, (n) ->
         n.name == name
+      throw "instance not found" unless k?
       callback k
 
   start: (callback) ->
@@ -83,7 +84,7 @@ exports.Linode = class Linode extends Instance
       @linode_id = res['LinodeID']
       @list (err, l) =>
         instances = _.filter l, ((x) => _s.startsWith x.name, @config.name)
-        numbers = _.map instances, (x) -> x.name.replace(/.*_/, '')
+        numbers = _.map instances, (x) -> +x.name.replace(/.*_/, '')
         number = mex numbers
         @client.call 'linode.update',
           'LinodeID': @linode_id
@@ -91,6 +92,7 @@ exports.Linode = class Linode extends Instance
           , have_updated
 
     have_updated = (err, res) =>
+      console.log err if err
       @_get_distro @config.distribution, create_disk
 
     create_disk = (id) =>

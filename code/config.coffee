@@ -11,6 +11,7 @@ exports.Config = class Config
     @
 
   _load_config: (name) ->
+    return unless path.existsSync "class/#{name}/config.json"
     text = fs.readFileSync "class/#{name}/config.json"
     config = JSON.parse text
     if config.include?

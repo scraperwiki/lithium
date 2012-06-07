@@ -8,6 +8,10 @@ Linode = (require '../code/linode').Linode
 
 describe 'Linode Instance', ->
   #TODO: handle errors properly from linode
+  spy = null
+  before ->
+    spy = sinon.spy Linode.client, 'call'
+
 
   describe 'finding the plan', ->
     plan_id = null
@@ -56,6 +60,7 @@ describe 'Linode Instance', ->
 
   describe 'when creating an instance with the boxecutor config', ->
     linode = null
+    last_call = null
     plan_nock = nocks.plans()
     create_nock = nocks.create()
     update_nock = nocks.linode_update()
@@ -66,7 +71,12 @@ describe 'Linode Instance', ->
     nocks.linode_fresh()
 
     before (done) ->
-      linode = Linode.create 'boxecutor', (res) ->
+      Linode.create 'boxecutor', (err, res) ->
+        linode = res
+        err_from_create = err
+        # Find the last call to linode.update
+        us = _.filter spy.args, (x) -> x[0] == 'linode.update'
+        last_call = us[us.length-1]
         done()
 
     it 'calls linode.create', ->
@@ -84,6 +94,10 @@ describe 'Linode Instance', ->
     it 'calls linode.config.create to set up a Linode config', ->
       create_config_nock.isDone().should.be.true
 
+    it 'has the right name', ->
+      linode.name.should.match /^boxecutor/
+      last_call[1].Label.should.equal 'boxecutor_0'
+
   describe 'when creating a second instance with the boxecutor config', ->
     last_call = null
     linode = null
@@ -98,7 +112,6 @@ describe 'Linode Instance', ->
     nocks.linode_fresh()
 
     before (done) ->
-      spy = sinon.spy Linode.client, 'call'
       Linode.create 'boxecutor', (err, res) ->
         linode = res
         err_from_create = err
@@ -194,6 +207,8 @@ describe 'Linode Instance', ->
     shutdown_nock = nocks.shutdown()
     list_nock = nocks.list()
     nocks.list_ip_specific()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
     nocks.list_ip_specific2()
 
     before (done) ->
@@ -210,7 +225,10 @@ describe 'Linode Instance', ->
     reboot_nock = nocks.reboot()
     list_nock = nocks.list()
     nocks.list_ip_specific()
+    nocks.list_ip_specific()
     nocks.list_ip_specific2()
+    nocks.list_ip_specific2()
+    list_nock = nocks.list()
 
     it 'calls linode.reboot on the instance', (done) ->
       Linode.get 'boxecutor_1', (instance) ->
