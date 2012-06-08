@@ -10,6 +10,8 @@ cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
 
 exports.Instance = class Instance
+  config_path: LithiumConfig.server_class_path()
+
   constructor: (config, id, name, state, ip) ->
     @config = new cf.Config config if config?
     @id = id if id?
@@ -74,7 +76,7 @@ exports.Instance = class Instance
       /^\d+_.+\.r\.\w/.test hook
 
     files_to_cp = _.map files_to_cp, (f) =>
-      "class/#{config.name}/hooks/#{f}"
+      "#{@config_path}/#{config.name}/hooks/#{f}"
     @cp files_to_cp, (exit_code) =>
       callback if exit_code > 0
       hooks = _.map config.hooks, (h) ->
@@ -89,7 +91,7 @@ exports.Instance = class Instance
     if /^\d+_.+\.r\.\w/.test hook.file
       @sh "sh /root/#{hook.file}", callback
     if /^\d+_.+\.l\.\w/.test hook.file
-      @_local_sh "class/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
+      @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
 
   # Connect via SSH and execute command
   # TODO: proper callbacks?
