@@ -4,7 +4,7 @@
 OLD_PATH=$PATH
 OLD_PS1=$PS1
 OLD_NODE_PATH=$NODE_PATH
-PATH=$(pwd)/node_modules/.bin:$PATH
+PATH=$(pwd)/node_modules/.bin:$(pwd)/bin:$PATH
 
 # Add ./code to NODE_PATH, adding a separating ':' if NODE_PATH
 # is already set.
@@ -17,4 +17,3 @@ deactivate () {
     PS1=$OLD_PS1
     NODE_PATH=$OLD_NODE_PATH
 }
-alias li='code/li.coffee'
