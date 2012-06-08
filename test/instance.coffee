@@ -46,10 +46,11 @@ describe 'Instance', ->
       console.log.restore()
 
     it 'scps remote hooks to instance', ->
-      i._scp.calledTwice.should.be.true
+      i._scp.calledThrice.should.be.true
 
     it 'uses ssh to exec remote hooks', ->
-      i._ssh.calledThrice.should.be.true
+      console.log i._ssh
+      i._ssh.callCount.should.equal 5
 
     it 'execs local hooks locally', ->
       i._local_sh.calledTwice.should.be.true

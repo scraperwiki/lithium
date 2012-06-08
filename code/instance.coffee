@@ -65,7 +65,7 @@ exports.Instance = class Instance
     c = @config
     all_parents = while c.parent?
       c = c.parent
-
+    all_parents = all_parents.reverse()
     configs = all_parents.concat @config
     configs = _.select configs, (c) -> c.hooks.length > 0
     async.forEachSeries configs, @run_config_hooks, callback
