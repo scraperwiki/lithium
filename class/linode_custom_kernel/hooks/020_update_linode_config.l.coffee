@@ -1,2 +1,2 @@
 #!/usr/bin/env coffee
-console.log "cofffffffffeeeeeeeeeee called"
+console.log "cofffffffffeeeeeeeeeee called with #{process.argv[2]}"

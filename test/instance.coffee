@@ -8,13 +8,13 @@ describe 'Instance', ->
   [i, callback] = [null, null]
 
   beforeEach ->
-    i = new Instance 'boxecutor'
+    i = new Instance 'boxecutor', 12121, 'boxecutor_2'
 
     callback = ->
 
     sinon.stub i, '_scp', (_a, _b, cb) -> cb()
     sinon.stub i, '_ssh', (_a, _b, cb) -> cb()
-    sinon.stub i, '_local_sh',  (_a, cb) -> cb()
+    sinon.stub i, '_local_sh',  (_a, _args, cb) -> cb()
 
   afterEach ->
     i._scp.restore()
@@ -38,12 +38,12 @@ describe 'Instance', ->
 
   describe 'run_hooks (run all hooks associated with config)', ->
     beforeEach (done) ->
-      sinon.stub console, 'log'
+      #sinon.stub console, 'log'
       i.run_hooks ->
         done()
 
     afterEach ->
-      console.log.restore()
+      #console.log.restore()
 
     it 'scps remote hooks to instance', ->
       i._scp.calledTwice.should.be.true
@@ -53,6 +53,9 @@ describe 'Instance', ->
 
     it 'execs local hooks locally', ->
       i._local_sh.calledTwice.should.be.true
+
+    it 'calls _local_sh with instance name as argument', ->
+      i._local_sh.args[1][1][0].should.equal 'boxecutor_2'
 
     it 'execs hooks of superconfigs', ->
       hooks = i._all_hooks()

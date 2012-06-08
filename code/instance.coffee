@@ -89,7 +89,7 @@ exports.Instance = class Instance
     if /^\d+_.+\.r\.\w/.test hook.file
       @sh "sh /root/#{hook.file}", callback
     if /^\d+_.+\.l\.\w/.test hook.file
-      @_local_sh "class/#{hook.config_name}/hooks/#{hook.file}", callback
+      @_local_sh "class/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
 
   # Connect via SSH and execute command
   # TODO: proper callbacks?
@@ -131,8 +131,8 @@ exports.Instance = class Instance
 
   # Spawn a command locally, needs to be executable
   # TODO: put somewhere more sane, name it properly: exec?
-  _local_sh: (command, callback) ->
-    cmd = spawn command, []
+  _local_sh: (command, args, callback) ->
+    cmd = spawn command, args
     cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
     cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
     cmd.on 'exit', callback
