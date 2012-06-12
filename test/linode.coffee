@@ -18,7 +18,7 @@ describe 'Linode Instance', ->
     nock = nocks.plans()
     
     before (done) ->
-      Linode._get_plan 512, 20, (pid) ->
+      Linode._get_plan 512, 20, (err, pid) ->
         plan_id = pid
         done()
 
@@ -33,7 +33,7 @@ describe 'Linode Instance', ->
     distro_nock = nocks.avail_distro()
 
     before (done) ->
-      Linode._get_distro 'Ubuntu 12.04 LTS', (id) ->
+      Linode._get_distro 'Ubuntu 12.04 LTS', (err, id) ->
         distro_id = id
         done()
 
@@ -48,7 +48,7 @@ describe 'Linode Instance', ->
     kernel_nock = nocks.avail_kernels()
 
     before (done) ->
-      Linode._get_kernel '3.2.1', (id) ->
+      Linode._get_kernel '3.2.1', (err, id) ->
         kernel_id = id
         done()
 
@@ -141,7 +141,7 @@ describe 'Linode Instance', ->
     ip_address = null
 
     before (done) ->
-      Linode._get_ip 206097, (i) ->
+      Linode._get_ip 206097, (err, i) ->
           ip_address = i
           done()
 

@@ -19,8 +19,17 @@ exports.Linode = class Linode extends Instance
   @create: (config, callback) ->
     super config
 
-    @_get_plan @config.ram, @config.disk_size, (plan) =>
-      @_linode_create plan, callback
+    async.waterfall [
+      @_get_config_linode_plan,
+      @_linode_create,
+      @_update_linode_label,
+      @_have_updated,
+      @_create_disk,
+      @_disk_created,
+      @_create_linode_config,
+    ], (err, result) =>
+      console.log err if err?
+      @_got_linode_id result, callback
 
   @destroy: (name, callback) ->
     @get name, (instance) =>
@@ -36,7 +45,7 @@ exports.Linode = class Linode extends Instance
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
       async.map list, (x, cb) =>
-        @_get_ip x.id, (ip) => x.ip_address = ip; cb null, x
+        @_get_ip x.id, (err, ip) => x.ip_address = ip; cb null, x
       , (error, results) -> callback err, results
 
   # Returns an instance given its name.
@@ -71,6 +80,9 @@ exports.Linode = class Linode extends Instance
 
   ###
 
+  @_get_config_linode_plan: (callback) =>
+    @_get_plan @config.ram, @config.disk_size, callback
+
   # Private method to create a linode from a plan.  Called from
   # @create; this does most of the actual work.
   @_linode_create: (plan_id, callback) =>
@@ -79,9 +91,9 @@ exports.Linode = class Linode extends Instance
       'PlanID': plan_id
       'PaymentTerm': 1
     , (err, res) =>
-      update_linode_label err, res
+      callback err, res
 
-    update_linode_label = (err, res) =>
+  @_update_linode_label: (res, callback) =>
       @linode_id = res['LinodeID']
       @list (err, l) =>
         instances = _.filter l, ((x) => _s.startsWith x.name, @config.name)
@@ -90,64 +102,64 @@ exports.Linode = class Linode extends Instance
         @client.call 'linode.update',
           'LinodeID': @linode_id
           'Label': "#{@config.name}_#{number}"
-          , have_updated
+          , callback
 
-    have_updated = (err, res) =>
-      console.log err if err
-      @_get_distro @config.distribution, create_disk
+  @_have_updated: (res, callback) =>
+    @_get_distro @config.distribution, callback
 
-    create_disk = (id) =>
-      @client.call 'linode.disk.createfromdistribution',
-        'LinodeID': @linode_id
-        'DistributionID': id
-        'Label': 'system'
-        'Size': @config.disk_size * 1000 # magic for now
-        'rootPass': 'r00ter' # magic for now
-        'rootSSHKey': LithiumConfig.sshkey_public()
-        , disk_created
+  @_create_disk: (id, callback) =>
+    @client.call 'linode.disk.createfromdistribution',
+      'LinodeID': @linode_id
+      'DistributionID': id
+      'Label': 'system'
+      'Size': @config.disk_size * 1000 # magic for now
+      'rootPass': 'r00ter' # magic for now
+      'rootSSHKey': LithiumConfig.sshkey_public()
+      , callback
 
-    disk_created = (err, res) =>
-      @disk_id = res['DiskID']
-      @_get_kernel @config.kernel, create_linode_config
-    
-    create_linode_config = (kernel_id) =>
-      @client.call 'linode.config.create',
-        'LinodeID': @linode_id
-        'KernelID': kernel_id
-        'Label': @config.name
-        'Comments': @config.description
-        'DiskList': @disk_id
-        'RootDeviceNum': 1
-        , got_linode_id
+  @_disk_created: (res, callback) =>
+    @disk_id = res['DiskID']
+    @_get_kernel @config.kernel, callback
 
-    got_linode_id = (err, res) =>
-        @client.call 'linode.list', {LinodeID:@linode_id}, (err, res) ->
-          callback err, _convert_to_instance res[0]
+  @_create_linode_config: (kernel_id, callback) =>
+    @client.call 'linode.config.create',
+      'LinodeID': @linode_id
+      'KernelID': kernel_id
+      'Label': @config.name
+      'Comments': @config.description
+      'DiskList': @disk_id
+      'RootDeviceNum': 1
+      , callback
+
+  @_got_linode_id: (res, callback) =>
+      @client.call 'linode.list', {LinodeID:@linode_id}, (err, res) ->
+        callback err, _convert_to_instance res[0]
 
   # Takes RAM as MB and disk as GB.
   @_get_plan: (ram, disk, callback) ->
     @client.call 'avail.LinodePlans', null, (err, res) ->
       p =  _.find res, (plan) ->
-        plan['DISK'] == disk and plan['RAM'] == ram
-      callback p['PLANID']
+        plan.DISK == disk and plan.RAM == ram
+      callback "Plan not found", null unless p?
+      callback err, p.PLANID
 
   @_get_distro: (name, callback) ->
     @client.call 'avail.distributions', null, (err, res) ->
       d = _.find res, (distro) ->
         distro['LABEL'] == name
-      callback d['DISTRIBUTIONID']
+      callback err, d['DISTRIBUTIONID']
 
   @_get_kernel: (version, callback) ->
     @client.call 'avail.kernels', null, (err, res) ->
       k = _.find res, (kernel) ->
         _s.contains kernel['LABEL'], version
-      callback k['KERNELID']
+      callback err, k['KERNELID']
 
   @_get_ip: (linode_id, callback) ->
    @client.call 'linode.ip.list',
      'LinodeID': linode_id
      , (err, res) ->
-       callback res[0]['IPADDRESS']
+       callback err, res[0]['IPADDRESS']
 
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
