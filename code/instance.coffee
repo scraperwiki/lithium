@@ -96,38 +96,37 @@ exports.Instance = class Instance
   # Connect via SSH and execute command
   # TODO: proper callbacks?
   _ssh: (key, command, callback) ->
-    @_wait_for_sshd()
-    args = [
-      '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
-    args = args.concat(command.split ' ')
+    @_wait_for_sshd =>
+      args = [
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
+      args = args.concat(command.split ' ')
 
-    ssh = spawn 'ssh', args
-    ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
-    ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
-    ssh.on 'exit', callback
+      ssh = spawn 'ssh', args
+      ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+      ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+      ssh.on 'exit', callback
 
   # Copy files via SCP
   # TODO: factor out into SSH & SCP class, proper callbacks?
   _scp: (key, files, callback) ->
-    @_wait_for_sshd()
-    args = [
-      '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key ]
-    args = args.concat files
-    args.push "root@#{@ip_address}:/root"
+    @_wait_for_sshd =>
+      args = [
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key ]
+      args = args.concat files
+      args.push "root@#{@ip_address}:/root"
 
-    ssh = spawn 'scp', args
-    ssh.stdout.on 'data', (data) -> console.log data.toString('ascii')
-    ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
-    ssh.on 'exit', callback
+      ssh = spawn 'scp', args
+      ssh.stdout.on 'data', (data) -> console.log data.toString('ascii')
+      ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
+      ssh.on 'exit', callback
 
   # Wait until we can connect to port 22 of instance
-  _wait_for_sshd: ->
+  _wait_for_sshd: (callback) ->
     f = =>
         client = net.connect 22, @ip_address, ->
-          setTimeout ->
-            clearInterval int
-          , 3000
-        client._handle.socket.destroy()
+          clearInterval int
+          callback()
+        client.on 'error', ->
 
     int = setInterval f, 1000
 
