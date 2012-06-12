@@ -138,10 +138,3 @@ exports.Instance = class Instance
     cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
     cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
     cmd.on 'exit', callback
-
-  _all_hooks: ->
-    c = @config
-    all_parent_hooks = while c.parent?
-      c = c.parent
-      c.hooks
-    _.flatten all_parent_hooks.concat @config.hooks
