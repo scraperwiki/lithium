@@ -4,6 +4,7 @@
 LinodeClient = (require 'linode-api').LinodeClient
 _            = require('underscore')
 _s           = require('underscore.string')
+async        = require 'async'
 
 LithiumConfig = (require 'lithium_config').LithiumConfig
 Instance      = (require 'instance').Instance
@@ -34,9 +35,9 @@ exports.Linode = class Linode extends Instance
   @list: (callback) ->
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
-      @amap ((x, cb) =>
-        @_get_ip x.id, (ip) => x.ip_address = ip; cb x),
-        list, (x) -> callback err, x
+      async.map list, (x, cb) =>
+        @_get_ip x.id, (ip) => x.ip_address = ip; cb null, x
+      , (error, results) -> callback err, results
 
   # Returns an instance given its name.
   @get: (name, callback) ->
@@ -147,13 +148,6 @@ exports.Linode = class Linode extends Instance
      'LinodeID': linode_id
      , (err, res) ->
        callback res[0]['IPADDRESS']
-
-  @amap: (f,l,cb,r) =>
-    if l.length == 0
-      cb r
-    else
-      f l[0], (x) =>
-        @amap f, l[1..], cb, (if !r? then [] else r).concat [x]
 
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
