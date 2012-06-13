@@ -2,28 +2,43 @@
 
 ## Controlling sysadmin insanity
 
-Lithium is a system of configurations and a command line tool to
+Lithium is a system of configurations and a command line tool to 
 control cloud based server instances.
 
+### Install ###
 To install prequisites:
 
     npm -f install
 
-(The '-f' ought not to be required, but is, because of a bug in
+(The '-f' ought not to be required, but is, because of a bug in 
 the linode API).
+
+### Usage ###
 
 Activate the environment (fiddles with PATH etc):
 
-    . ./activate
+    . activate
 
-(pro tip: if you use bash then you can type '. activate'
-instead.  booyah!)
+Note, you need to set LINODE\_API\_KEY and LITHIUM\_CONFIG\_PATH.
+
+    Usage: li <command> OPTIONS
+            list      List instances
+            create    Create a instance by config
+            destroy   Destroy an instance
+
+            start     Start an instance
+            stop      Stop an instance
+            restart   Restart an instance
+            sh        Execute a command on an instance
+            deploy    Run deployment hooks on an instance [OBSOLESCENT]
+
+### Tests ###
 
 To run the tests
 
     mocha
 
-Keep the tests running (BDD mode):
+Keep the tests running 
 
     mocha -w
 
