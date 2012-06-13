@@ -4,40 +4,60 @@ _s = require 'underscore.string'
 
 Linode = (require 'linode').Linode
 
+# args[1] is the name of the command, e.g. start
+# args[2..] are the command args
 help = (args) ->
-  process.stdout.write('Very helpful help\n')
+  help =
+  """
+  Usage: li <command> [OPTIONS]
+    Commands:
+      list      List instances
+      create    Create a instance by config
+      destroy   Destroy an instance
 
+      start     Start an instance
+      stop      Stop an instance
+      restart   Restart an instance
+      sh        Execute a command on an instance
+      deploy    Run deployment hooks on an instance [31m[OBSOLESCENT][0m
+
+  """
+  process.stdout.write help
+
+# args[2] is the name of the instance to start
 start = (args) ->
-  # args[1] is 'start'
-  # args[2] is 'placebo' (later on it will be 'linode' or 'ec2'
-  # or something else or maybe defaulted).
-  # args[3] is the configuration of the server to start.
-
-  # if args[2] is 'placebo' then throw 'foo'
   Linode.get args[2], (instance) ->
     instance.start ->
       process.stdout.write('started\n')
 
+# args[2] is the name of the instance to stop
 stop = (args) ->
   Linode.get args[2], (instance) ->
     instance.stop ->
       process.stdout.write('stopped\n')
 
+# args[2] is the name of the instance to restart
 restart = (args) ->
   Linode.get args[2], (instance) ->
     instance.restart ->
       process.stdout.write('restarted\n')
 
+# Takes a config name, and creates an instance based
+# on that config
+# args[2] is the name of the config
 create = (args) ->
   process.stdout.write('Creating...\n')
   Linode.create args[2], ->
-    process.stdout.write('Possibly created\n')
+    process.stdout.write('Created!\n')
 
+# args[2] is the name of the instance to destroy
 destroy = (args) ->
   process.stdout.write "Destroying #{args[2]}...\n"
   Linode.destroy args[2], ->
-    process.stdout.write "Possibly destroyed\n"
+    process.stdout.write "Destroyed\n"
 
+# Executes a command on the instance
+# args[2] is the command
 sh = (args) ->
   Linode.get args[2], (instance) ->
     callback = (code) ->
@@ -46,6 +66,8 @@ sh = (args) ->
 
     instance.sh (args[3..].join ' '), callback
 
+# Deploys an instance by running all its hooks
+# args[2] is the instance
 deploy = (args) ->
   Linode.get args[2], (instance) ->
     callback = (code) ->
@@ -53,6 +75,7 @@ deploy = (args) ->
         process.exit code
     instance.run_hooks callback
 
+# Displays a list of instances
 list = (args) ->
   process.stdout.write "Listing instances...\n"
   Linode.list (err, list) ->
