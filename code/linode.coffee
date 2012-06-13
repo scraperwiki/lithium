@@ -6,6 +6,7 @@ _            = require('underscore')
 _s           = require('underscore.string')
 async        = require 'async'
 
+mex           = (require 'utility').mex
 LithiumConfig = (require 'lithium_config').LithiumConfig
 Instance      = (require 'instance').Instance
 
@@ -19,17 +20,23 @@ exports.Linode = class Linode extends Instance
   @create: (config, callback) ->
     super config
 
+    # Create Linode via this waterfall.
+    # Parameters from the last function's call back are
+    # sent to the next function in the array.
     async.waterfall [
-      @_get_config_linode_plan,
-      @_linode_create,
-      @_update_linode_label,
-      @_have_updated,
-      @_create_disk,
-      @_disk_created,
-      @_create_linode_config,
+      @_get_config_linode_plan
+      @_linode_create
+      @_update_linode_label
+      @_have_updated
+      @_create_disk
+      @_disk_created
+      @_create_linode_config
     ], (err, result) =>
+      # This is called at the end of the waterfall,
+      # or if any of the callbacks returns an error.
+      # TODO: improve error handling
       console.log err if err?
-      @_got_linode_id result, callback
+      @_got_linode_id result, callback if result?
 
   @destroy: (name, callback) ->
     @get name, (instance) =>
@@ -49,6 +56,7 @@ exports.Linode = class Linode extends Instance
       , (error, results) -> callback err, results
 
   # Returns an instance given its name.
+  # TODO: put err in to config
   @get: (name, callback) ->
     @list (err, list) ->
       k = _.find list, (n) ->
@@ -74,17 +82,15 @@ exports.Linode = class Linode extends Instance
       , (err, res) ->
         callback()
 
-  ###
 
-  Only Private Methods Below Here
+  ####### Only Private Methods Below Here #######
 
-  ###
+  ### @create waterfall functions ###
 
+  # Get a config's corresponding Linode plan
   @_get_config_linode_plan: (callback) =>
     @_get_plan @config.ram, @config.disk_size, callback
 
-  # Private method to create a linode from a plan.  Called from
-  # @create; this does most of the actual work.
   @_linode_create: (plan_id, callback) =>
     @client.call 'linode.create',
       'DatacenterID': 7
@@ -107,13 +113,16 @@ exports.Linode = class Linode extends Instance
   @_have_updated: (res, callback) =>
     @_get_distro @config.distribution, callback
 
+  # Create a system (distribution) disk
+  # TODO: multiple disks?
+  # TODO: change root password default
   @_create_disk: (id, callback) =>
     @client.call 'linode.disk.createfromdistribution',
       'LinodeID': @linode_id
       'DistributionID': id
       'Label': 'system'
-      'Size': @config.disk_size * 1000 # magic for now
-      'rootPass': 'r00ter' # magic for now
+      'Size': @config.disk_size * 1000
+      'rootPass': 'r00ter'
       'rootSSHKey': LithiumConfig.sshkey_public()
       , callback
 
@@ -134,6 +143,8 @@ exports.Linode = class Linode extends Instance
   @_got_linode_id: (res, callback) =>
       @client.call 'linode.list', {LinodeID:@linode_id}, (err, res) ->
         callback err, _convert_to_instance res[0]
+
+  ### End create waterfall functions ###
 
   # Takes RAM as MB and disk as GB.
   @_get_plan: (ram, disk, callback) ->
@@ -169,12 +180,3 @@ _convert_to_instance = (l) =>
   # bit at the end.
   config = o.name.replace /_\d+$/, ''
   new Linode config, o.id, o.name, o.state
-
-# :todo: move somewhere else
-# :todo: (exercise for reader) rewrite with O(n) complexity
-# Minimal EXcluded.
-# Given a set of numbers (non-negative integers), return the Minimal Excluded
-# number, which is the smallest number that is not in the set.
-# For example, mex([0,1,5]) == 2
-mex = (l) ->
-  _.min(i for i in [0..l.length] when i not in l)
