@@ -110,7 +110,7 @@ exports.Instance = class Instance
   _scp: (key, files, callback) ->
     @_wait_for_sshd =>
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', 'o', 'IdentitiesOnly=yes', '-i', key ]
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-o', 'IdentitiesOnly=yes', '-i', key ]
       args = args.concat files
       args.push "root@#{@ip_address}:/root"
 
