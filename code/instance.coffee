@@ -19,8 +19,7 @@ exports.Instance = class Instance
     @state = state if state?
     @ip_address = ip if ip?
 
-  # Create a server ready to run. Somewhere on the internet.
-  # Servers are created in the "stopped" state.
+  # Create a server ready to run. Somewhere on the internet.  # Servers are created in the "stopped" state.
   @create: (config, callback) ->
     @config = new cf.Config config
 
@@ -98,7 +97,7 @@ exports.Instance = class Instance
   _ssh: (key, command, callback) ->
     @_wait_for_sshd =>
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}"]
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
       args = args.concat(command.split ' ')
 
       ssh = spawn 'ssh', args
@@ -111,7 +110,7 @@ exports.Instance = class Instance
   _scp: (key, files, callback) ->
     @_wait_for_sshd =>
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key ]
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', 'o', 'IdentitiesOnly=yes', '-i', key ]
       args = args.concat files
       args.push "root@#{@ip_address}:/root"
 
