@@ -100,10 +100,20 @@ exports.Instance = class Instance
         '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
       args = args.concat(command.split ' ')
 
-      ssh = spawn 'ssh', args
-      ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
-      ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
-      ssh.on 'exit', callback
+      tries = 0
+      again = ->
+        if tries
+          console.log 'Trying ssh again'
+        ssh = spawn 'ssh', args
+        ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+        ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+        ssh.on 'exit', (rc) ->
+          if rc == 255
+            tries += 1
+            again()
+          else
+            callback()
+      again()
 
   # Copy files via SCP
   # TODO: factor out into SSH & SCP class, proper callbacks?
