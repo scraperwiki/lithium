@@ -42,13 +42,14 @@ restart = (args) ->
     instance.restart ->
       process.stdout.write('restarted\n')
 
-# Takes a config name, and creates an instance based
-# on that config
+# Takes a config name, and creates an instance based on that config.
 # args[2] is the name of the config
 create = (args) ->
   process.stdout.write('Creating...\n')
-  Linode.create args[2], ->
-    process.stdout.write('Created!\n')
+  Linode.create args[2], (dummy_, item) ->
+    Linode.get item.name, (item) ->
+      process.stdout.write('Created!\n')
+      log_one_item item
 
 # args[2] is the name of the instance to destroy
 destroy = (args) ->
