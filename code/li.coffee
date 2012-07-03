@@ -82,7 +82,26 @@ list = (args) ->
     if err?
       console.log err
     else
-      console.log item for item in list
+      log_one_item item for item in list
+
+log_one_item = (item) ->
+  state = friendly_state item.state
+  console.log "#{item.name} [#{item.config.name}] #{item.ip_address} #{state}"
+
+friendly_state = (state) ->
+  if LINODE_STATE[state]?
+    LINODE_STATE[state]
+  else
+    "Unknown state: #{state}"
+
+# Borrowed from https://svn.apache.org/repos/asf/libcloud/trunk/libcloud/compute/drivers/linode.py
+LINODE_STATE =
+    '-2': 'BootFailed'           # Boot Failed
+    '-1': 'Creating'             # Being Created
+    '0' : 'New'                  # Brand New
+    '1' : 'Running'              # Running
+    '2' : 'Terminated'           # Powered Off
+    '3' : 'Rebooting'            # Shutting Down
 
 exports.main = (args) ->
   # If supplied *args* should be a list of arguments,
