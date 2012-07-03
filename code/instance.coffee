@@ -105,8 +105,8 @@ exports.Instance = class Instance
         if tries
           console.log 'Trying ssh again'
         ssh = spawn 'ssh', args
-        ssh.stdout.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
-        ssh.stderr.on 'data', (data) -> console.log 'ssh: ' + data.toString('ascii')
+        ssh.stdout.on 'data', (data) -> process.stdout.write 'ssh: ' + data.toString('ascii')
+        ssh.stderr.on 'data', (data) -> process.stderr.write 'ssh: ' + data.toString('ascii')
         ssh.on 'exit', (rc) ->
           if rc == 255
             tries += 1
