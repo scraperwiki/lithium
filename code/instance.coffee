@@ -95,30 +95,20 @@ exports.Instance = class Instance
   # Connect via SSH and execute command
   # TODO: proper callbacks?
   _ssh: (key, command, callback) ->
-    @_wait_for_sshd =>
+    @_wait_for_sshd key, =>
       args = [
         '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
-      args = args.concat(command.split ' ')
+      args = args.concat command.split ' '
 
-      tries = 0
-      again = ->
-        if tries
-          console.log 'Trying ssh again'
-        ssh = spawn 'ssh', args
-        ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh[0m: ' + data.toString('ascii')
-        ssh.stderr.on 'data', (data) -> process.stderr.write '[1;31mssh[0m: ' + data.toString('ascii')
-        ssh.on 'exit', (rc) ->
-          if rc == 255
-            tries += 1
-            again()
-          else
-            callback rc
-      again()
+      ssh = spawn 'ssh', args
+      ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh[0m: ' + data.toString('ascii')
+      ssh.stderr.on 'data', (data) -> process.stderr.write '[1;31mssh[0m: ' + data.toString('ascii')
+      ssh.on 'exit', callback
 
   # Copy files via SCP
   # TODO: factor out into SSH & SCP class, proper callbacks?
   _scp: (key, files, callback) ->
-    @_wait_for_sshd =>
+    @_wait_for_sshd key, =>
       args = [
         '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-o', 'IdentitiesOnly=yes', '-i', key ]
       args = args.concat files
@@ -129,15 +119,21 @@ exports.Instance = class Instance
       ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
       ssh.on 'exit', callback
 
-  # Wait until we can connect to port 22 of instance
-  _wait_for_sshd: (callback) ->
-    f = =>
-        client = net.connect 22, @ip_address, ->
-          clearInterval int
+  # Wait until we can connect to ssh and run the command "exit 99".
+  _wait_for_sshd: (key, callback) ->
+    again = =>
+      args = [
+        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
+      args = args.concat "exit 99"
+      ssh = spawn 'ssh', args
+      ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh?[0m: ' + data.toString('ascii')
+      ssh.stderr.on 'data', (data) -> process.stderr.write '[1;31mssh?[0m: ' + data.toString('ascii')
+      ssh.on 'exit', (rc) ->
+        if rc == 99
           callback()
-        client.on 'error', ->
-
-    int = setInterval f, 1000
+        else
+          setTimeout again, 999
+    again()
 
   # Spawn a command locally, needs to be executable
   # TODO: put somewhere more sane, name it properly: exec?
