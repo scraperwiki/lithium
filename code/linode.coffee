@@ -122,7 +122,7 @@ exports.Linode = class Linode extends Instance
       'DistributionID': id
       'Label': 'system'
       'Size': @config.disk_size * 1000
-      'rootPass': 'r00ter'
+      'rootPass': Math.random() + "" + Math.random()
       'rootSSHKey': LithiumConfig.sshkey_public()
       , callback
 
