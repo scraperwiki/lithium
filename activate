@@ -37,8 +37,14 @@ esac
 
 if [ -z "$LINODE_API_KEY" ]
 then
+    [ -e ../swops-secret/keys.sh ] &&
+      . ../swops-secret/keys.sh
+fi
+
+if [ -z "$LINODE_API_KEY" ]
+then
     printf "Note: LINODE_API_KEY is not set\n"
-    printf "Try: . ../swops-secret/keys.sh\n"
+    printf "(I already tried . ../swops-secret/keys.sh)\n"
 fi
 
 
