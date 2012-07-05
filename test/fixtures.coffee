@@ -3,6 +3,7 @@ nock = require 'nock'
 # List details of a specific linode
 exports.list_ip_specific = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.ip.list&LinodeID=206097')
   .reply 200,
     """
@@ -21,6 +22,7 @@ exports.list_ip_specific = ->
 # List details of a specific linode
 exports.list_ip_specific2 = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.ip.list&LinodeID=206102')
   .reply 200,
     """
@@ -39,6 +41,7 @@ exports.list_ip_specific2 = ->
 # Boot Linode
 exports.boot = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.boot&LinodeID=206097')
   .reply 200,
     """
@@ -55,6 +58,7 @@ exports.boot = ->
 # Create config
 exports.create_config = ->
   nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get("/?api_key=fakeapikey&api_action=linode.config.create&LinodeID=206102&KernelID=145&Label=boxecutor&Comments=Box%20execution%20server&DiskList=953010&RootDeviceNum=1")
   .reply 200,
     """
@@ -71,6 +75,7 @@ exports.create_config = ->
 # Linode create
 exports.create = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.create&DatacenterID=7&PlanID=1&PaymentTerm=1')
   .reply 200,
     """
@@ -89,6 +94,7 @@ exports.create_dist_disk = ->
   nock('https://api.linode.com')
   .filteringPath (path) ->
     return path
+      .replace(/api_key=[^&]*/g, 'api_key=fakeapikey')
       .replace(/rootSSHKey=[^&]*/g, 'rootSSHKey=fakesshkey')
       .replace(/rootPass=[^&]*/g, 'rootPass=fakepass')
   .get('/?api_key=fakeapikey&api_action=linode.disk.createfromdistribution&LinodeID=206102&DistributionID=98&Label=system&Size=20000&rootPass=fakepass&rootSSHKey=fakesshkey')
@@ -107,6 +113,7 @@ exports.create_dist_disk = ->
 # ext3 Disk create
 exports.create_disk = ->
   nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.disk.create&LinodeID=206097&Label=data&Type=ext3&Size=10000')
   .reply 200,
     """
@@ -123,6 +130,7 @@ exports.create_disk = ->
 # Linode list
 exports.list = ->
   return nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.list&')
   .reply 200,
     """
@@ -162,6 +170,7 @@ exports.list = ->
 # Reboot
 exports.reboot = ->
   return nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.reboot&LinodeID=206097')
   .reply 200,
     """
@@ -178,6 +187,7 @@ exports.reboot = ->
 # Shutdown
 exports.shutdown = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.shutdown&LinodeID=206097')
   .reply 200,
   """
@@ -194,7 +204,10 @@ exports.shutdown = ->
 # Linode update
 exports.linode_update = ->
   return nock('https://api.linode.com')
-  .filteringPath(/Label=[^&]*/, 'Label=boxecutor')
+  .filteringPath (path) ->
+    return path
+      .replace(/Label=[^&]*/, 'Label=boxecutor')
+      .replace(/api_key=[^&]*/, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.update&LinodeID=206102&Label=boxecutor')
   .reply 200,
    """
@@ -211,6 +224,7 @@ exports.linode_update = ->
 exports.linode_fresh = ->
   nock('https://api.linode.com')
   # 206102 must match the LinodeID returned in the call to linode.create.
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.list&LinodeID=206102')
   .reply 200,
     """
@@ -237,6 +251,7 @@ exports.linode_fresh = ->
 
 exports.linode_running = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.list&LinodeID=206097')
   .reply 200,
     """
@@ -263,6 +278,7 @@ exports.linode_running = ->
 
 exports.linode_shutdown = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.list&LinodeID=206097')
   .reply 200,
     """
@@ -292,6 +308,7 @@ exports.linode_shutdown = ->
 # Available distributions
 exports.avail_distro = ->
   return nock("https://api.linode.com")
+    .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
     .get("/?api_key=fakeapikey&api_action=avail.distributions&")
     .reply 200,
       """
@@ -316,6 +333,7 @@ exports.avail_distro = ->
 # Linode plans
 exports.plans = ->
   return nock("https://api.linode.com:443")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get("/?api_key=fakeapikey&api_action=avail.LinodePlans&")
   .reply 200,
     """
@@ -330,6 +348,7 @@ exports.plans = ->
 
 exports.avail_kernels = ->
   return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get("/?api_key=fakeapikey&api_action=avail.kernels&")
   .reply 200,
     """
@@ -342,6 +361,7 @@ exports.avail_kernels = ->
 
 exports.delete = ->
   nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.delete&LinodeID=206097&skipChecks=true')
   .reply 200,
   """
