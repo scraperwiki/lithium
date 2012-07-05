@@ -1,20 +1,44 @@
 #!/bin/sh
 # run me with . activate
 
+first_path () {
+  # print to stdout the first argument that exists as a
+  # directory.  If none, return a non-zero status code.
+  if [ $# -eq 0 ] ; then
+    return 2
+  fi
+  if [ -d "$1" ] ; then
+    printf '%s' "$1"
+    return 0
+  fi
+  shift
+  first_path "$@"
+}
+
 OLD_PATH=$PATH
 OLD_PS1=$PS1
 OLD_NODE_PATH=$NODE_PATH
 PATH=$(pwd)/node_modules/.bin:$(pwd)/bin:$PATH
+[ -d ./node_modules ] ||
+  printf "./node_modules does not exist... suspicious\n"
 
 # Add ./code to NODE_PATH, adding a separating ':' if NODE_PATH
 # is already set.
 # See http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_06_02
 export NODE_PATH=$(pwd)/code${NODE_PATH+:}${NODE_PATH}
 
-export LITHIUM_CONFIG_PATH=~/swops-secret/lithium/class
+b=$(dirname $(pwd))/swops-secret
+export LITHIUM_CONFIG_PATH
+LITHIUM_CONFIG_PATH=$(first_path ~/swops-secret/lithium/class "$b")
+case $? in
+  0) ;;
+  *) printf "Couldn't find a LITHIUM_CONFIG_PATH directory.\n";;
+esac
+
 if [ -z "$LINODE_API_KEY" ]
 then
     printf "Note: LINODE_API_KEY is not set\n"
+    printf "Try: . ../swops-secret/keys.sh\n"
 fi
 
 
