@@ -48,6 +48,7 @@ exports.Instance = class Instance
   state: (callback) ->
 
   # Run a shell command as root on the server.
+  # *command* is a list (of strings).
   sh: (command, callback) ->
     @_ssh LithiumConfig.sshkey_private, command, callback
 
@@ -92,21 +93,16 @@ exports.Instance = class Instance
     if /^\d+_.+\.l\.\w/.test hook.file
       @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
 
-  # Connect via SSH and execute command
+  # Connect via SSH and execute command.
+  # *command* is a list of strings.
   # TODO: proper callbacks?
   _ssh: (key, command, callback) ->
     @_wait_for_sshd key, =>
       stdout_ends_in_newline = true
       stderr_ends_in_newline = true
-      args = [
-        '-o', 'LogLevel=ERROR',
-        '-o', 'ConnectTimeout=10',
-        '-o', 'UserKnownHostsFile=/dev/null',
-        '-o', 'StrictHostKeyChecking=no',
-        '-o', 'IdentitiesOnly=yes',
-        '-i', key]
-      args.push "root@#{@ip_address}"
-      args = args.concat command.split ' '
+      args = _common_ssh_args key
+      extra = ["root@#{@ip_address}"].concat command
+      args = args.concat extra
 
       ssh = spawn 'ssh', args
       ssh.stdout.on 'data', (data) ->
@@ -127,13 +123,7 @@ exports.Instance = class Instance
   # TODO: factor out into SSH & SCP class, proper callbacks?
   _scp: (key, files, callback) ->
     @_wait_for_sshd key, =>
-      args = [
-        '-o', 'LogLevel=ERROR',
-        '-o', 'ConnectTimeout=10',
-        '-o', 'UserKnownHostsFile=/dev/null',
-        '-o', 'StrictHostKeyChecking=no',
-        '-o', 'IdentitiesOnly=yes',
-        '-i', key]
+      args = _common_ssh_args key
       args = args.concat files
       args.push "root@#{@ip_address}:/root"
 
@@ -142,21 +132,21 @@ exports.Instance = class Instance
       ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
       ssh.on 'exit', callback
 
-  # Wait until we can connect to ssh and run the command "exit 99".
+  # Wait until we can connect to ssh and run the command "exit 99".  It needs to
+  # be about this complicated because we run this when a server is starting up;
+  # and there are all sorts of funny cases (server not yet started, server started
+  # but sshd not started, and, bizarrely, sshd running but giving protocol errors
+  # (possibly when it first starts it is generating a host key)).
   _wait_for_sshd: (key, callback) ->
+    args = _common_ssh_args key
+    args.push "root@#{@ip_address}"
+    args.push "exit 99"
     again = =>
-      args = [
-        '-o', 'LogLevel=ERROR',
-        '-o', 'ConnectTimeout=10',
-        '-o', 'UserKnownHostsFile=/dev/null',
-        '-o', 'StrictHostKeyChecking=no',
-        '-o', 'IdentitiesOnly=yes',
-        '-i', key]
-      args.push "root@#{@ip_address}"
-      args = args.concat "exit 99"
       ssh = spawn 'ssh', args
-      ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh?[0m: ' + data.toString('ascii')
-      ssh.stderr.on 'data', (data) -> process.stderr.write '[1;31mssh?[0m: ' + data.toString('ascii')
+      ssh.stdout.on 'data', (data) ->
+        process.stdout.write '[1;32mssh?[0m: ' + data.toString('ascii')
+      ssh.stderr.on 'data', (data) ->
+        process.stderr.write '[1;31mssh?[0m: ' + data.toString('ascii')
       ssh.on 'exit', (rc) ->
         if rc == 99
           callback()
@@ -171,3 +161,11 @@ exports.Instance = class Instance
     cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
     cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
     cmd.on 'exit', callback
+
+_common_ssh_args = (key) -> [
+  '-o', 'LogLevel=ERROR',
+  '-o', 'ConnectTimeout=10',
+  '-o', 'UserKnownHostsFile=/dev/null',
+  '-o', 'StrictHostKeyChecking=no',
+  '-o', 'IdentitiesOnly=yes',
+  '-i', key]
