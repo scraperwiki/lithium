@@ -99,7 +99,13 @@ exports.Instance = class Instance
       stdout_ends_in_newline = true
       stderr_ends_in_newline = true
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
+        '-o', 'LogLevel=ERROR',
+        '-o', 'ConnectTimeout=10',
+        '-o', 'UserKnownHostsFile=/dev/null',
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'IdentitiesOnly=yes',
+        '-i', key]
+      args.push "root@#{@ip_address}"
       args = args.concat command.split ' '
 
       ssh = spawn 'ssh', args
@@ -122,7 +128,12 @@ exports.Instance = class Instance
   _scp: (key, files, callback) ->
     @_wait_for_sshd key, =>
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-o', 'IdentitiesOnly=yes', '-i', key ]
+        '-o', 'LogLevel=ERROR',
+        '-o', 'ConnectTimeout=10',
+        '-o', 'UserKnownHostsFile=/dev/null',
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'IdentitiesOnly=yes',
+        '-i', key]
       args = args.concat files
       args.push "root@#{@ip_address}:/root"
 
@@ -135,7 +146,13 @@ exports.Instance = class Instance
   _wait_for_sshd: (key, callback) ->
     again = =>
       args = [
-        '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
+        '-o', 'LogLevel=ERROR',
+        '-o', 'ConnectTimeout=10',
+        '-o', 'UserKnownHostsFile=/dev/null',
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'IdentitiesOnly=yes',
+        '-i', key]
+      args.push "root@#{@ip_address}"
       args = args.concat "exit 99"
       ssh = spawn 'ssh', args
       ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh?[0m: ' + data.toString('ascii')
