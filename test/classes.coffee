@@ -45,7 +45,7 @@ describe 'Hooks', ->
       config.hooks.should.include '010_install_custom_kernel.r.sh'
       config.hooks.should.include '020_update_linode_config.l.coffee'
       config.hooks.should.include '030_reboot_instance.l.sh'
-      config.hooks.should.include '040_check_kernel_version.r.sh'
+      config.hooks.should.include '040_check_kernel_version.l.sh'
 
     it 'should not find any hooks that are not correctly specified', ->
       config.hooks.should.not.include 'no_order_number.r.sh'
@@ -53,7 +53,7 @@ describe 'Hooks', ->
 
     it 'sorts the hooks in ascending order', ->
       config.hooks[0].should.equal '010_install_custom_kernel.r.sh'
-      config.hooks[3].should.equal '040_check_kernel_version.r.sh'
+      config.hooks[3].should.equal '040_check_kernel_version.l.sh'
 
   describe 'when a hooks directory does not exist', ->
     it 'should not error', ->

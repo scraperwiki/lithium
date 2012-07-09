@@ -57,13 +57,14 @@ destroy = (args) ->
   Linode.destroy args[2], ->
     process.stdout.write "Destroyed\n"
 
-# Executes a command on the instance
-# args[2] is the command
+# Executes a command on the instance (with ssh)
+# args[2] is the name of the instance;
+# args[3] and onwards are the command to run.
 sh = (args) ->
   Linode.get args[2], (instance) ->
     callback = (code) ->
-        console.log "Exit code: #{code}"
-        process.exit code
+      console.log "[22;32mExit code[0m: #{code}"
+      process.exit code
 
     instance.sh (args[3..].join ' '), callback
 
