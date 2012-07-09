@@ -96,13 +96,25 @@ exports.Instance = class Instance
   # TODO: proper callbacks?
   _ssh: (key, command, callback) ->
     @_wait_for_sshd key, =>
+      stdout_ends_in_newline = true
+      stderr_ends_in_newline = true
       args = [
         '-o', 'LogLevel=ERROR', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no', '-i', key, "root@#{@ip_address}", '-o', 'IdentitiesOnly=yes' ]
       args = args.concat command.split ' '
 
       ssh = spawn 'ssh', args
-      ssh.stdout.on 'data', (data) -> process.stdout.write '[1;32mssh[0m: ' + data.toString('ascii')
-      ssh.stderr.on 'data', (data) -> process.stderr.write '[1;31mssh[0m: ' + data.toString('ascii')
+      ssh.stdout.on 'data', (data) ->
+        if stdout_ends_in_newline
+          process.stdout.write '[1;32mssh[0m: '
+        stuff = data.toString('ascii')
+        process.stdout.write stuff
+        stdout_ends_in_newline = /\n$/.test stuff
+      ssh.stderr.on 'data', (data) ->
+        if stderr_ends_in_newline
+          process.stderr.write '[1;31mssh[0m: '
+        stuff = data.toString('ascii')
+        process.stderr.write stuff
+        stderr_ends_in_newline = /\n$/.test stuff
       ssh.on 'exit', callback
 
   # Copy files via SCP
