@@ -72,8 +72,9 @@ sh = (args) ->
 deploy = (args) ->
   Linode.get args[2], (instance) ->
     callback = (code) ->
-        console.log "Exit code: #{code}"
-        process.exit code
+      if code is null then code = 0
+      console.log "Exit code: #{code}"
+      process.exit code
     instance.run_hooks callback
 
 # Displays a list of instances
