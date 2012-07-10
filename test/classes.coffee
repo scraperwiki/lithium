@@ -10,7 +10,7 @@ config = null
 
 describe 'Vanilla Config', ->
   it 'should exist', ->
-    f = fs.openSync('class/vanilla/config.json', 'r')
+    f = fs.openSync('test/class/vanilla/config.json', 'r')
 
 describe 'Config inclusion', ->
 
