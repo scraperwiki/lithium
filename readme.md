@@ -34,6 +34,8 @@ Note, you need to set LINODE\_API\_KEY and LITHIUM\_CONFIG\_PATH.
 
 ### Tests ###
 
+Note: Make sure LITHIUM\_CONFIG\_PATH and LINODE\_API\_KEY are unset before running the tests.
+
 To run the tests
 
     mocha

@@ -11,4 +11,4 @@ exports.LithiumConfig = class LithiumConfig
     if process.env['LITHIUM_CONFIG_PATH']
       return process.env['LITHIUM_CONFIG_PATH']
     else
-      return 'class'
+      return 'test/class'

@@ -49,10 +49,10 @@ describe 'Instance', ->
       i._scp.calledThrice.should.be.true
 
     it 'uses ssh to exec remote hooks', ->
-      i._ssh.callCount.should.equal 6
+      i._ssh.callCount.should.equal 5
 
     it 'execs local hooks locally', ->
-      i._local_sh.calledThrice.should.be.true
+      i._local_sh.calledTwice.should.be.true
 
     it 'calls _local_sh with instance name as argument', ->
       i._local_sh.args[1][1][0].should.equal 'boxecutor_2'
