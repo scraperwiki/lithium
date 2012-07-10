@@ -64,6 +64,13 @@ exports.Linode = class Linode extends Instance
       throw "instance not found" unless k?
       callback k
 
+  # Returns (by passing to the *callback* function) the arguments (err, res) whre
+  # *err* is an error, and *res* is an array of jobs.
+  @jobs: (instance, callback) ->
+    @client.call 'linode.job.list',
+      'LinodeID': instance.id
+      , callback
+
   start: (callback) ->
     Linode.client.call 'linode.boot',
       'LinodeID': @id

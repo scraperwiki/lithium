@@ -1,6 +1,7 @@
 #!/usr/bin/env coffee
 
 _s = require 'underscore.string'
+async = require 'async'
 
 Linode = (require 'linode').Linode
 
@@ -106,6 +107,26 @@ LINODE_STATE =
     '2' : 'Terminated'           # Powered Off
     '3' : 'Rebooting'            # Shutting Down
 
+jobs = (args) ->
+  # Linode lists jobs per instance, so we have to iterate over
+  # each of our instances.
+  Linode.list (err, instances) ->
+    if err?
+      console.log err
+    else
+      async.forEachSeries instances, (instance, callback) ->
+        console.log "Jobs for #{instance.name} #{instance.id}"
+        Linode.jobs instance, (err, jobs) ->
+          if err?
+            console.log err
+          else
+            async.forEachSeries jobs, ((job, cb) ->
+              log_one_job job
+              cb()), callback
+
+log_one_job = (job) ->
+  console.log job
+
 exports.main = (args) ->
   # If supplied *args* should be a list of arguments,
   # including args[0], the command name; if not supplied,
@@ -123,6 +144,7 @@ exports.main = (args) ->
     when 'list' then list(args)
     when 'sh' then sh(args)
     when 'deploy' then deploy(args)
+    when 'jobs' then jobs(args)
     when undefined then help(args)
     else process.stderr.write("Try li help for help, not #{args}\n")
 
