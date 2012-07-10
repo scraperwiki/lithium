@@ -54,10 +54,10 @@ exports.Instance = class Instance
     @_ssh LithiumConfig.sshkey_private, command, callback
 
   # Login interactively, using SSH.
-  ssh: () ->
+  ssh: (username) ->
     key = LithiumConfig.sshkey_private
     args = _common_ssh_args key
-    extra = ["root@#{@ip_address}"]
+    extra = ["#{username}@#{@ip_address}"]
     args = args.concat extra
     cmd = (['ssh'].concat args).join ' '
     kexec cmd

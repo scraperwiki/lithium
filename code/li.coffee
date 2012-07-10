@@ -73,8 +73,16 @@ sh = (args) ->
 # ssh into an instance.
 # args[2] is the name of the instance.
 ssh = (args) ->
-  Linode.get args[2], (instance) ->
-    instance.ssh()
+  name = args[2]
+  l = name.split '@'
+  if l.length == 2
+    instancename = l[1]
+    username = l[0]
+  else
+    instancename = l[0]
+    username = 'root'
+  Linode.get instancename, (instance) ->
+    instance.ssh username
 
 # Deploys an instance by running all its hooks
 # args[2] is the instance
