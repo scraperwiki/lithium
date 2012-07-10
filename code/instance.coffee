@@ -144,9 +144,9 @@ exports.Instance = class Instance
     again = =>
       ssh = spawn 'ssh', args
       ssh.stdout.on 'data', (data) ->
-        process.stdout.write '[1;32mssh?[0m: ' + data.toString('ascii')
+        process.stdout.write '[1;32mwaiting-for-sshd[0m: ' + data.toString('ascii')
       ssh.stderr.on 'data', (data) ->
-        process.stderr.write '[1;31mssh?[0m: ' + data.toString('ascii')
+        process.stderr.write '[1;31mwaiting-for-sshd[0m: ' + data.toString('ascii')
       ssh.on 'exit', (rc) ->
         if rc == 99
           callback()
