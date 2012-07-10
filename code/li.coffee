@@ -12,15 +12,15 @@ help = (args) ->
   """
   Usage: li <command> [OPTIONS]
     Commands:
-      list      List instances
-      create    Create a instance by config
-      destroy   Destroy an instance
+      list                      List instances
+      create <config-name>      Create a instance by config
+      destroy <instance-name>   Destroy an instance
 
-      start     Start an instance
-      stop      Stop an instance
-      restart   Restart an instance
-      sh        Execute a command on an instance
-      deploy    Run deployment hooks on an instance [31m[OBSOLESCENT][0m
+      start <instance-name>     Start an instance
+      stop <instance-name>      Stop an instance
+      restart <instance-name>   Restart an instance
+      sh <instance-name> <cmd>  Execute a command on an instance
+      deploy <instance-name>    Run deployment hooks on an instance [31m[OBSOLESCENT][0m
 
   """
   process.stdout.write help
