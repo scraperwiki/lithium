@@ -12,15 +12,16 @@ help = (args) ->
   """
   Usage: li <command> [OPTIONS]
     Commands:
-      list                      List instances
-      create <config-name>      Create a instance by config
-      destroy <instance-name>   Destroy an instance
+      list                        List instances
+      create <config-name>        Create a instance by config
+      destroy <instance-name>     Destroy an instance
 
-      start <instance-name>     Start an instance
-      stop <instance-name>      Stop an instance
-      restart <instance-name>   Restart an instance
-      sh <instance-name> <cmd>  Execute a command on an instance
-      deploy <instance-name>    Run deployment hooks on an instance [31m[OBSOLESCENT][0m
+      start <instance-name>       Start an instance
+      stop <instance-name>        Stop an instance
+      restart <instance-name>     Restart an instance
+      deploy <instance-name>      Run deployment hooks on an instance [31m[OBSOLESCENT][0m
+      sh <instance-name> <cmd>    Execute a command on an instance
+      ssh [user@]<instance-name>  Log in to instance using ssh
 
   """
   process.stdout.write help
@@ -68,6 +69,12 @@ sh = (args) ->
       process.exit code
 
     instance.sh (args[3..].join ' '), callback
+
+# ssh into an instance.
+# args[2] is the name of the instance.
+ssh = (args) ->
+  Linode.get args[2], (instance) ->
+    instance.ssh()
 
 # Deploys an instance by running all its hooks
 # args[2] is the instance
@@ -143,6 +150,7 @@ exports.main = (args) ->
     when 'destroy' then destroy(args)
     when 'list' then list(args)
     when 'sh' then sh(args)
+    when 'ssh' then ssh(args)
     when 'deploy' then deploy(args)
     when 'jobs' then jobs(args)
     when undefined then help(args)

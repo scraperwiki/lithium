@@ -5,6 +5,7 @@ net           = require 'net'
 
 _             = require 'underscore'
 async         = require 'async'
+kexec         = require 'kexec'
 
 cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
@@ -51,6 +52,15 @@ exports.Instance = class Instance
   # *command* is a list (of strings).
   sh: (command, callback) ->
     @_ssh LithiumConfig.sshkey_private, command, callback
+
+  # Login interactively, using SSH.
+  ssh: () ->
+    key = LithiumConfig.sshkey_private
+    args = _common_ssh_args key
+    extra = ["root@#{@ip_address}"]
+    args = args.concat extra
+    cmd = (['ssh'].concat args).join ' '
+    kexec cmd
 
   # Copy files to the instance
   cp: (files, callback) ->
