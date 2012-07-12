@@ -177,7 +177,8 @@ exports.Linode = class Linode extends Instance
    @client.call 'linode.ip.list',
      'LinodeID': linode_id
      , (err, res) ->
-       callback err, res[0]['IPADDRESS']
+       record = _.find res, (r) -> r.ISPUBLIC is 1
+       callback err, record.IPADDRESS
 
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
