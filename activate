@@ -35,6 +35,8 @@ case $? in
   *) printf "Couldn't find a LITHIUM_CONFIG_PATH directory.\n";;
 esac
 
+. li.completion
+
 if [ -z "$LINODE_API_KEY" ]
 then
     [ -e ../swops-secret/keys.sh ] &&
@@ -50,6 +52,7 @@ fi
 
 PS1="[li]$PS1"
 deactivate () {
+    complete -r li
     PATH=$OLD_PATH
     PS1=$OLD_PS1
     NODE_PATH=$OLD_NODE_PATH

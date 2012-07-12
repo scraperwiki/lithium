@@ -1,0 +1,21 @@
+_li ()            #  By convention, the function name
+{                 #  starts with an underscore
+  local cur
+
+  COMPREPLY=()   # Array variable storing the possible completions
+  cur=${COMP_WORDS[COMP_CWORD]} # The word currently being completed
+
+  case ${COMP_WORDS[1]} in
+    # Don't suggest anything other than a single command (for now)
+    create|deploy|destroy|help|jobs|list|restart|sh|ssh|start|stop)
+      ;;
+    # No command specified yet, so they are possible completions...
+    *)
+      # ...as long as this is the first argument
+      if [ $COMP_CWORD == 1 ]; then COMPREPLY=( $( compgen -W 'help start stop restart create destroy sh ssh deploy list jobs' -- $cur ) ); fi ;;
+  esac
+
+  return 0
+}
+
+complete -F _li -o filenames li
