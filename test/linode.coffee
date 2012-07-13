@@ -16,7 +16,7 @@ describe 'Linode Instance', ->
   describe 'finding the plan', ->
     plan_id = null
     nock = nocks.plans()
-    
+
     before (done) ->
       Linode._get_plan 512, 20, (err, pid) ->
         plan_id = pid
@@ -136,35 +136,23 @@ describe 'Linode Instance', ->
     it 'gets the instance from the name', ->
       instance.id.should.equal 206097
 
-  describe 'when getting the public ip address from its linode id', ->
+  describe 'when getting the public and private ip address from its linode id', ->
     list_ip_specific = nocks.list_ip_specific()
-    ip_address = null
+    public_ip_address = null
+    private_ip_address = null
 
     before (done) ->
-      Linode._get_ip 206097, (err, i) ->
-          ip_address = i
-          done()
+      Linode._get_ips 206097, (err, pub_i, priv_i) ->
+        public_ip_address = pub_i
+        private_ip_address = priv_i
+        done()
 
     it 'calls linode.list on a specific linodeid', ->
       list_ip_specific.isDone().should.be.true
 
     it 'gets the instance from the name', ->
-      ip_address.should.equal '176.58.105.104'
-
-  describe 'when getting the private ip address from its linode id', ->
-    list_ip_specific = nocks.list_ip_specific()
-    ip_address = null
-
-    before (done) ->
-      Linode._get_private_ip 206097, (err, i) ->
-          ip_address = i
-          done()
-
-    it 'calls linode.list on a specific linodeid', ->
-      list_ip_specific.isDone().should.be.true
-
-    it 'gets the instance from the name', ->
-      ip_address.should.equal '192.168.194.104'
+      public_ip_address.should.equal '176.58.105.104'
+      private_ip_address.should.equal '192.168.194.104'
 
   describe 'when destroying an instance', ->
     delete_nock = nocks.delete()
