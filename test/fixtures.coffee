@@ -10,7 +10,9 @@ exports.list_ip_specific = ->
     { "ERRORARRAY":[],
       "DATA":[
           {"IPADDRESSID":133212,"RDNS_NAME":"li463-104.members.linode.com",
-          "LINODEID":206097,"ISPUBLIC":1,"IPADDRESS":"176.58.105.104"}
+          "LINODEID":206097,"ISPUBLIC":1,"IPADDRESS":"176.58.105.104"},
+          {"IPADDRESSID":133213,"RDNS_NAME":"li104.members.linode.com",
+          "LINODEID":206097,"ISPUBLIC":0,"IPADDRESS":"192.168.194.104"}
           ],
       "ACTION":"linode.ip.list" }
     """,
