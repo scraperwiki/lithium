@@ -118,7 +118,7 @@ command.list =
 
 log_one_item = (item) ->
   state = friendly_state item.state
-  console.log "#{item.name} [#{item.config.name}] #{item.ip_address} #{state}"
+  console.log "#{item.name} [#{item.config.name}] Pub:#{item.ip_address}#{if item.private_ip_address? then ' Priv:' + item.private_ip_address else ''} #{state}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?

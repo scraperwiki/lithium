@@ -52,7 +52,11 @@ exports.Linode = class Linode extends Instance
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
       async.map list, (x, cb) =>
-        @_get_ip x.id, (err, ip) => x.ip_address = ip; cb null, x
+        @_get_ip x.id, ( (err, ip) =>
+          x.ip_address = ip
+          @_get_private_ip x.id, ( (err, private_ip) =>
+            x.private_ip_address = private_ip
+            cb null, x ) )
       , (error, results) -> callback err, results
 
   # Returns an instance given its name.
@@ -185,7 +189,8 @@ exports.Linode = class Linode extends Instance
      'LinodeID': linode_id
      , (err, res) ->
        record = _.find res, (r) -> r.ISPUBLIC is 0
-       callback err, record.IPADDRESS
+       callback "No private IP Address", null unless record?
+       callback err, record.IPADDRESS unless not record?
 
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
