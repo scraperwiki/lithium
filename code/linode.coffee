@@ -180,6 +180,13 @@ exports.Linode = class Linode extends Instance
        record = _.find res, (r) -> r.ISPUBLIC is 1
        callback err, record.IPADDRESS
 
+  @_get_private_ip: (linode_id, callback) ->
+   @client.call 'linode.ip.list',
+     'LinodeID': linode_id
+     , (err, res) ->
+       record = _.find res, (r) -> r.ISPUBLIC is 0
+       callback err, record.IPADDRESS
+
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
 _convert_to_instance = (l) =>

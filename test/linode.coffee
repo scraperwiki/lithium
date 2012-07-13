@@ -136,7 +136,7 @@ describe 'Linode Instance', ->
     it 'gets the instance from the name', ->
       instance.id.should.equal 206097
 
-  describe 'when getting an ip address from its linode id', ->
+  describe 'when getting the public ip address from its linode id', ->
     list_ip_specific = nocks.list_ip_specific()
     ip_address = null
 
@@ -150,6 +150,21 @@ describe 'Linode Instance', ->
 
     it 'gets the instance from the name', ->
       ip_address.should.equal '176.58.105.104'
+
+  describe 'when getting the private ip address from its linode id', ->
+    list_ip_specific = nocks.list_ip_specific()
+    ip_address = null
+
+    before (done) ->
+      Linode._get_private_ip 206097, (err, i) ->
+          ip_address = i
+          done()
+
+    it 'calls linode.list on a specific linodeid', ->
+      list_ip_specific.isDone().should.be.true
+
+    it 'gets the instance from the name', ->
+      ip_address.should.equal '192.168.194.104'
 
   describe 'when destroying an instance', ->
     delete_nock = nocks.delete()
