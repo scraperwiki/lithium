@@ -19,7 +19,7 @@ help = (args) ->
       start <instance-name>       Start an instance
       stop <instance-name>        Stop an instance
       restart <instance-name>     Restart an instance
-      deploy <instance-name>      Run deployment hooks on an instance [31m[OBSOLESCENT][0m
+      deploy <instance-name>      Run deployment hooks on instance [31m[OBSOLESCENT][0m
       sh <instance-name> <cmd>    Execute a command on an instance
       ssh [user@]<instance-name>  Log in to instance using ssh
 
