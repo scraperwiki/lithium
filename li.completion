@@ -1,0 +1,28 @@
+_li_complete ()   #  By convention, the function name
+{                 #  starts with an underscore
+  local cur
+
+  COMPREPLY=()   # Array variable storing the possible completions
+  cur=${COMP_WORDS[COMP_CWORD]} # The word currently being completed
+
+  #create|deploy|destroy|help|jobs|list|restart|sh|ssh|start|stop)
+
+  # If first argument, it must be a command
+  if [ $COMP_CWORD == 1 ]; then
+    COMPREPLY=( $( compgen -W 'help start stop restart create destroy sh ssh deploy list jobs' -- $cur ) )
+  elif [ $COMP_CWORD == 2 ]; then
+    case ${COMP_WORDS[1]} in
+      # If a create command, the second argument must be a config
+      create)
+        COMPREPLY=( $( compgen -W '$(ls -m "$LITHIUM_CONFIG_PATH/lithium/class" | tr -d ',')' -- $cur ) )
+        ;;
+  #    deploy|destroy|help|restart|sh|start|stop)
+  #
+  #    ssh)
+    esac
+  fi
+
+  return 0
+}
+
+complete -F _li_complete -o filenames li

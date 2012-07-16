@@ -5,107 +5,120 @@ async = require 'async'
 
 Linode = (require 'linode').Linode
 
+command = {}
+
 # args[1] is the name of the command, e.g. start
 # args[2..] are the command args
-help = (args) ->
-  help =
-  """
-  Usage: li <command> [OPTIONS]
-    Commands:
-      list                        List instances
-      create <config-name>        Create a instance by config
-      destroy <instance-name>     Destroy an instance
-
-      start <instance-name>       Start an instance
-      stop <instance-name>        Stop an instance
-      restart <instance-name>     Restart an instance
-      deploy <instance-name>      Run deployment hooks on instance [31m[OBSOLESCENT][0m
-      sh <instance-name> <cmd>    Execute a command on an instance
-      ssh [user@]<instance-name>  Log in to instance using ssh
-
-  """
-  process.stdout.write help
+command.help = 
+  help: "help                        Show this help"
+  run: (args) ->
+    cmdhelp = (command[cmd].help for cmd of command).join('\n    ')
+    help =
+    """
+    Usage: li <command> [OPTIONS]
+      Commands:
+        
+    """ + cmdhelp + '\n'
+    process.stdout.write help
 
 # args[2] is the name of the instance to start
-start = (args) ->
-  Linode.get args[2], (instance) ->
-    instance.start ->
-      process.stdout.write('started\n')
+command.start = 
+  help: "start <instance-name>       Start an instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      instance.start ->
+        process.stdout.write('started\n')
 
 # args[2] is the name of the instance to stop
-stop = (args) ->
-  Linode.get args[2], (instance) ->
-    instance.stop ->
-      process.stdout.write('stopped\n')
+command.stop = 
+  help: "stop <instance-name>        Stop an instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      instance.stop ->
+        process.stdout.write('stopped\n')
 
 # args[2] is the name of the instance to restart
-restart = (args) ->
-  Linode.get args[2], (instance) ->
-    instance.restart ->
-      process.stdout.write('restarted\n')
+command.restart = 
+  help: "restart <instance-name>     Restart an instance"
+  run: restart = (args) ->
+    Linode.get args[2], (instance) ->
+      instance.restart ->
+        process.stdout.write('restarted\n')
 
 # Takes a config name, and creates an instance based on that config.
 # args[2] is the name of the config
-create = (args) ->
-  process.stdout.write('Creating...\n')
-  Linode.create args[2], (dummy_, item) ->
-    Linode.get item.name, (item) ->
-      process.stdout.write('Created!\n')
-      log_one_item item
+command.create = 
+  help: "create <config-name>        Create a instance by config"
+  run: (args) ->
+    process.stdout.write('Creating...\n')
+    Linode.create args[2], (dummy_, item) ->
+      Linode.get item.name, (item) ->
+        process.stdout.write('Created!\n')
+        log_one_item item
 
 # args[2] is the name of the instance to destroy
-destroy = (args) ->
-  process.stdout.write "Destroying #{args[2]}...\n"
-  Linode.destroy args[2], ->
-    process.stdout.write "Destroyed\n"
+command.destroy = 
+  help: "destroy <instance-name>     Destroy an instance"
+  run: (args) ->
+    process.stdout.write "Destroying #{args[2]}...\n"
+    Linode.destroy args[2], ->
+      process.stdout.write "Destroyed\n"
 
 # Executes a command on the instance (with ssh)
 # args[2] is the name of the instance;
 # args[3] and onwards are the command to run.
-sh = (args) ->
-  Linode.get args[2], (instance) ->
-    callback = (code) ->
-      console.log "[22;32mExit code[0m: #{code}"
-      process.exit code
+command.sh =
+  help: "sh <instance-name> <cmd>    Execute a command on instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      callback = (code) ->
+        console.log "[22;32mExit code[0m: #{code}"
+        process.exit code
 
-    instance.sh (args[3..].join ' '), callback
+      instance.sh (args[3..].join ' '), callback
 
 # ssh into an instance.
 # args[2] is the name of the instance.
-ssh = (args) ->
-  name = args[2]
-  l = name.split '@'
-  if l.length == 2
-    instancename = l[1]
-    username = l[0]
-  else
-    instancename = l[0]
-    username = 'root'
-  Linode.get instancename, (instance) ->
-    instance.ssh username
+command.ssh =
+  help: "ssh [user@]<instance-name>  Log in to instance using ssh"
+  run: (args) ->
+    name = args[2]
+    l = name.split '@'
+    if l.length == 2
+      instancename = l[1]
+      username = l[0]
+    else
+      instancename = l[0]
+      username = 'root'
+    Linode.get instancename, (instance) ->
+      instance.ssh username
 
 # Deploys an instance by running all its hooks
 # args[2] is the instance
-deploy = (args) ->
-  Linode.get args[2], (instance) ->
-    callback = (code) ->
-      if code is null then code = 0
-      console.log "Exit code: #{code}"
-      process.exit code
-    instance.run_hooks callback
+command.deploy =
+  help: "deploy <instance-name>      Run deployment hooks on instance [31m[OBSOLESCENT][0m"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      callback = (code) ->
+        if code is null then code = 0
+        console.log "Exit code: #{code}"
+        process.exit code
+      instance.run_hooks callback
 
 # Displays a list of instances
-list = (args) ->
-  process.stdout.write "Listing instances...\n"
-  Linode.list (err, list) ->
-    if err?
-      console.log err
-    else
-      log_one_item item for item in list
+command.list = 
+  help: "list                        List instances"
+  run: (args) ->
+    process.stdout.write "Listing instances...\n"
+    Linode.list (err, list) ->
+      if err?
+        console.log err
+      else
+        log_one_item item for item in list
 
 log_one_item = (item) ->
   state = friendly_state item.state
-  console.log "#{item.name} [#{item.config.name}] #{item.ip_address} #{state}"
+  console.log "#{item.name} [#{item.config.name}] Pub:#{item.ip_address}#{if item.private_ip_address? then ' Priv:' + item.private_ip_address else ''} #{state}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?
@@ -122,22 +135,24 @@ LINODE_STATE =
     '2' : 'Terminated'           # Powered Off
     '3' : 'Rebooting'            # Shutting Down
 
-jobs = (args) ->
-  # Linode lists jobs per instance, so we have to iterate over
-  # each of our instances.
-  Linode.list (err, instances) ->
-    if err?
-      console.log err
-    else
-      async.forEachSeries instances, (instance, callback) ->
-        console.log "Jobs for #{instance.name} #{instance.id}"
-        Linode.jobs instance, (err, jobs) ->
-          if err?
-            console.log err
-          else
-            async.forEachSeries jobs, ((job, cb) ->
-              log_one_job job
-              cb()), callback
+command.jobs = 
+  help: "jobs                        List all Linode jobs"
+  run: (args) ->
+    # Linode lists jobs per instance, so we have to iterate over
+    # each of our instances.
+    Linode.list (err, instances) ->
+      if err?
+        console.log err
+      else
+        async.forEachSeries instances, (instance, callback) ->
+          console.log "Jobs for #{instance.name} #{instance.id}"
+          Linode.jobs instance, (err, jobs) ->
+            if err?
+              console.log err
+            else
+              async.forEachSeries jobs, ((job, cb) ->
+                log_one_job job
+                cb()), callback
 
 log_one_job = (job) ->
   console.log job
@@ -149,20 +164,13 @@ exports.main = (args) ->
   if not args?
     args = process.argv[1..]
 
-  switch args[1]
-    when 'help' then help(args)
-    when 'start' then start(args)
-    when 'stop' then stop(args)
-    when 'restart' then restart(args)
-    when 'create' then create(args)
-    when 'destroy' then destroy(args)
-    when 'list' then list(args)
-    when 'sh' then sh(args)
-    when 'ssh' then ssh(args)
-    when 'deploy' then deploy(args)
-    when 'jobs' then jobs(args)
-    when undefined then help(args)
-    else process.stderr.write("Try li help for help, not #{args}\n")
+  cmd_name = args[1]
+  if cmd_name of command
+    command[cmd_name].run(args)
+  else if not cmd_name?
+    command['help'].run(args)
+  else
+    process.stderr.write("Try li help for help, not #{args}\n")
 
 if _s.endsWith process.argv[1], 'li.coffee'
   exports.main()
