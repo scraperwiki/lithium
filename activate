@@ -35,7 +35,7 @@ case $? in
   *) printf "Couldn't find a LITHIUM_CONFIG_PATH directory.\n";;
 esac
 
-. li.completion
+. code/li.completion
 
 if [ -z "$LINODE_API_KEY" ]
 then
