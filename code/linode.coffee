@@ -27,7 +27,8 @@ exports.Linode = class Linode extends Instance
       @_get_config_linode_plan
       @_linode_create
       @_update_linode_label
-      @_have_updated
+      @_addprivate
+      @_distro
       @_create_disk
       @_disk_created
       @_create_linode_config
@@ -120,7 +121,12 @@ exports.Linode = class Linode extends Instance
           'Label': "#{@config.name}_#{number}"
           , callback
 
-  @_have_updated: (res, callback) =>
+  @_addprivate: (res, callback) =>
+    @client.call 'linode.ip.addprivate',
+      'LinodeID': @linode_id
+      , callback
+
+  @_distro: (res, callback) =>
     @_get_distro @config.distribution, callback
 
   # Create a system (distribution) disk

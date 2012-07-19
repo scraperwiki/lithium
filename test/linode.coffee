@@ -53,8 +53,7 @@ describe 'Linode Instance', ->
         done()
 
     it 'calls avail.kernels', ->
-      kernel_nock.isDone().should.be.true
-
+      kernel_nock.isDone().should.be.true 
     it 'finds a kernel by version number', ->
       kernel_id.should.equal 145
 
@@ -64,6 +63,7 @@ describe 'Linode Instance', ->
     plan_nock = nocks.plans()
     create_nock = nocks.create()
     update_nock = nocks.linode_update()
+    addprivate_nock = nocks.addprivate()
     create_distro_nock = nocks.create_dist_disk()
     distro_nock = nocks.avail_distro()
     create_config_nock = nocks.create_config()
@@ -81,6 +81,9 @@ describe 'Linode Instance', ->
 
     it 'calls linode.create', ->
       create_nock.isDone().should.be.true
+
+    it 'calls linode.ip.addprivate', ->
+      addprivate_nock.isDone().should.be.true
 
     it 'calls linode.update to set the label', ->
       update_nock.isDone().should.be.true

@@ -373,3 +373,18 @@ exports.delete = ->
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
   connection: "keep-alive"
+# Linode addprivate
+exports.addprivate = ->
+  return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get("/?api_key=fakeapikey&api_action=linode.ip.addprivate&LinodeID=206102")
+  .reply 200,
+    """
+      {"ERRORARRAY":[],
+       "DATA":{"IPAddressID":48606},
+       "ACTION":"linode.ip.addprivate"}
+    """,
+  date: "Thu, 19 Jul 2012 10:16:00 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"
