@@ -14,11 +14,12 @@ _li_complete ()   #  By convention, the function name
     case ${COMP_WORDS[1]} in
       # If a create command, the second argument must be a config
       create)
-        COMPREPLY=( $( compgen -W '$(ls -m "$LITHIUM_CONFIG_PATH/lithium/class" | tr -d ',')' -- $cur ) )
+        COMPREPLY=( $( compgen -W '$(ls -m "$LITHIUM_CONFIG_PATH" | tr -d ',')' -- $cur ) )
         ;;
-  #    deploy|destroy|help|restart|sh|start|stop)
-  #
-  #    ssh)
+      deploy|destroy|help|restart|sh|start|stop|ssh)
+        STUFF="$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/_/' )" 
+        COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
+        ;;
     esac
   fi
 
