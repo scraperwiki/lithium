@@ -9,7 +9,7 @@ command = {}
 
 # args[1] is the name of the command, e.g. start
 # args[2..] are the command args
-command.help = 
+command.help =
   help: "help                        Show this help"
   run: (args) ->
     cmdhelp = (command[cmd].help for cmd of command).join('\n    ')
@@ -22,7 +22,7 @@ command.help =
     process.stdout.write help
 
 # args[2] is the name of the instance to start
-command.start = 
+command.start =
   help: "start <instance-name>       Start an instance"
   run: (args) ->
     Linode.get args[2], (instance) ->
@@ -30,7 +30,7 @@ command.start =
         process.stdout.write('started\n')
 
 # args[2] is the name of the instance to stop
-command.stop = 
+command.stop =
   help: "stop <instance-name>        Stop an instance"
   run: (args) ->
     Linode.get args[2], (instance) ->
@@ -38,7 +38,7 @@ command.stop =
         process.stdout.write('stopped\n')
 
 # args[2] is the name of the instance to restart
-command.restart = 
+command.restart =
   help: "restart <instance-name>     Restart an instance"
   run: restart = (args) ->
     Linode.get args[2], (instance) ->
@@ -47,7 +47,7 @@ command.restart =
 
 # Takes a config name, and creates an instance based on that config.
 # args[2] is the name of the config
-command.create = 
+command.create =
   help: "create <config-name>        Create a instance by config"
   run: (args) ->
     process.stdout.write('Creating...\n')
@@ -57,7 +57,7 @@ command.create =
         log_one_item item
 
 # args[2] is the name of the instance to destroy
-command.destroy = 
+command.destroy =
   help: "destroy <instance-name>     Destroy an instance"
   run: (args) ->
     process.stdout.write "Destroying #{args[2]}...\n"
@@ -106,7 +106,7 @@ command.deploy =
       instance.run_hooks callback
 
 # Displays a list of instances
-command.list = 
+command.list =
   help: "list                        List instances"
   run: (args) ->
     process.stdout.write "Listing instances...\n"
@@ -135,7 +135,7 @@ LINODE_STATE =
     '2' : 'Terminated'           # Powered Off
     '3' : 'Rebooting'            # Shutting Down
 
-command.jobs = 
+command.jobs =
   help: "jobs                        List all Linode jobs"
   run: (args) ->
     # Linode lists jobs per instance, so we have to iterate over
