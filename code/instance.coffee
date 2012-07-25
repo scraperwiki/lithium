@@ -96,12 +96,15 @@ exports.Instance = class Instance
 
   #### Private methods ####
 
+  # Runs file if it is of the form DDD_something.r.ext (remotely)
+  # or DDD_something.l.ext (locally).
   _call_hook: (hook, callback) =>
     console.log "Running #{hook.file}"
     if /^\d+_.+\.r\.\w/.test hook.file
       @sh "sh /root/#{hook.file}", callback
     if /^\d+_.+\.l\.\w/.test hook.file
       @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
+    callback()
 
   # Connect via SSH and execute command.
   # *command* is a list of strings.
