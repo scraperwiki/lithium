@@ -104,7 +104,7 @@ exports.Instance = class Instance
       @sh "sh /root/#{hook.file}", callback
     if /^\d+_.+\.l\.\w/.test hook.file
       @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
-    callback()
+    # callback()
 
   # Connect via SSH and execute command.
   # *command* is a list of strings.
