@@ -56,4 +56,5 @@ deactivate () {
     PATH=$OLD_PATH
     PS1=$OLD_PS1
     NODE_PATH=$OLD_NODE_PATH
+    unset -f deactivate
 }
