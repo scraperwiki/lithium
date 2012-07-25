@@ -12,7 +12,7 @@ describe 'Instance', ->
 
     callback = ->
 
-    sinon.stub i, '_scp', (_a, _b, cb) -> cb()
+    sinon.stub i, '_scp', (_a, _b, cb, _r) -> cb()
     sinon.stub i, '_ssh', (_a, _b, cb) -> cb()
     sinon.stub i, '_local_sh',  (_a, _args, cb) -> cb()
 

@@ -42,18 +42,10 @@ describe 'Hooks', ->
       config = new cf.Config 'linode_custom_kernel'
 
     it 'should find all hooks in the hooks directory', ->
-      config.hooks.should.include '010_install_custom_kernel.r.sh'
-      config.hooks.should.include '020_update_linode_config.l.coffee'
-      config.hooks.should.include '030_reboot_instance.l.sh'
-      config.hooks.should.include '040_check_kernel_version.r.sh'
 
     it 'should not find any hooks that are not correctly specified', ->
-      config.hooks.should.not.include 'no_order_number.r.sh'
-      config.hooks.should.not.include '050_no_local_or_remote_ext.sh'
 
     it 'sorts the hooks in ascending order', ->
-      config.hooks[0].should.equal '010_install_custom_kernel.r.sh'
-      config.hooks[3].should.equal '040_check_kernel_version.r.sh'
 
   describe 'when a hooks directory does not exist', ->
     it 'should not error', ->

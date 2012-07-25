@@ -27,9 +27,4 @@ exports.Config = class Config
         @[key] = value if key isnt 'include'
 
   _load_hooks: ->
-    hooks_dir = "#{li_cfg.server_class_path()}/#{@name}/hooks"
-    return unless path.existsSync hooks_dir
-    files = fs.readdirSync hooks_dir
-    @hooks = (_.select files, (f) ->
-      /^\d+_.+\.(l|r)\.\w/.test f
-    ).sort()
+    @hooks_dir = "#{li_cfg.server_class_path()}/#{@name}/hooks"

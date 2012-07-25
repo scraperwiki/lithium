@@ -1,10 +1,12 @@
 #
 # Instance interface.
 spawn         = require('child_process').spawn
+fs            = require 'fs'
 net           = require 'net'
 
 _             = require 'underscore'
 async         = require 'async'
+# https://github.com/jprichardson/node-kexec
 kexec         = require 'kexec'
 
 cf            = require 'config'
@@ -68,6 +70,18 @@ exports.Instance = class Instance
       @_scp LithiumConfig.sshkey_private, files, callback
     else callback
 
+  # Copy entire tree of files to the instance.
+  # All the files will be copied relative to the directory you
+  # pass in.  The copy starts by 'cd'ing (in a subshell) into
+  # the directory you pass as the argument (and scp -r the
+  # files).  Consequently, the files retain their relative position.
+  # So if you pass in /opt/sun/foobar and there is a
+  # file /opt/sun/foobar/snack/wozzle then it will get copied
+  # as snack/wozzle (ending up in ~/snack/wozzle where ~ is the
+  # home directory on the remote machine).
+  cpdir: (dir, callback) ->
+    @_scp LithiumConfig.sshkey_private, [dir+'/.'], callback, true
+
   # Copy & run hooks on instance
   # TODO: coupled
   # TODO: we don't actually test this
@@ -77,21 +91,23 @@ exports.Instance = class Instance
       c = c.parent
     all_parents = all_parents.reverse()
     configs = all_parents.concat @config
-    configs = _.select configs, (c) -> c.hooks.length > 0
+    # configs = _.select configs, (c) -> c.hooks.length > 0
     async.forEachSeries configs, @run_config_hooks, callback
 
   run_config_hooks: (config, callback) =>
     console.log "Running hooks for #{config.name}"
-    files_to_cp = _.select config.hooks, (hook) ->
-      /^\d+_.+\.r\.\w/.test hook
 
-    files_to_cp = _.map files_to_cp, (f) =>
-      "#{@config_path}/#{config.name}/hooks/#{f}"
-    @cp files_to_cp, (exit_code) =>
+    @cpdir config.hooks_dir, (exit_code) =>
       callback if exit_code > 0
-      hooks = _.map config.hooks, (h) ->
+
+      # Run hooks only from top-level of directory tree.
+      files = (fs.readdirSync config.hooks_dir).sort()
+      # Don't cull list here, leave _call_hook to decide
+      # what a callable hook is.
+      
+      things = _.map files, (h) ->
         {config_name: config.name, file: h}
-      async.forEachSeries hooks, @_call_hook, callback
+      async.forEachSeries things, @_call_hook, callback
 
 
   #### Private methods ####
@@ -99,12 +115,15 @@ exports.Instance = class Instance
   # Runs file if it is of the form DDD_something.r.ext (remotely)
   # or DDD_something.l.ext (locally).
   _call_hook: (hook, callback) =>
-    console.log "Running #{hook.file}"
     if /^\d+_.+\.r\.\w/.test hook.file
+      console.log "Running remote #{hook.file}"
       @sh "sh /root/#{hook.file}", callback
-    if /^\d+_.+\.l\.\w/.test hook.file
+    else if /^\d+_.+\.l\.\w/.test hook.file
+      console.log "Running local #{hook.file}"
       @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
-    # callback()
+    else
+      console.log "(Ignoring #{hook.file})"
+      callback()
 
   # Connect via SSH and execute command.
   # *command* is a list of strings.
@@ -134,9 +153,11 @@ exports.Instance = class Instance
 
   # Copy files via SCP
   # TODO: factor out into SSH & SCP class, proper callbacks?
-  _scp: (key, files, callback) ->
+  _scp: (key, files, callback, recursive=false) ->
     @_wait_for_sshd key, =>
       args = _common_ssh_args key
+      if recursive
+        args = ['-r'].concat args
       args = args.concat files
       args.push "root@#{@ip_address}:/root"
 
