@@ -47,6 +47,14 @@ exports.Linode = class Linode extends Instance
          , (err, res) ->
            callback()
 
+  @rename: (name, newname, callback) ->
+    @get name, (instance) =>
+      @client.call 'linode.update',
+         'LinodeID': instance.id
+         'Label': newname
+         , (err, res) ->
+           callback(err)
+
   # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
   # is a error, and *res* is an array of instances.
   @list: (callback) ->

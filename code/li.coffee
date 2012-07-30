@@ -64,6 +64,17 @@ command.destroy =
     Linode.destroy args[2], ->
       process.stdout.write "Destroyed\n"
 
+# renames the instance args[2] to args[3]
+command.rename =
+  help: "rename <name> <new-name>    Rename an instance"
+  run: (args) ->
+    process.stdout.write "Renaming #{args[2]}...\n"
+    Linode.rename args[2], args[3], (err) ->
+      if err?
+        process.stdout.write "Error while renaming: #{err}\n"
+      else
+        process.stdout.write "Renamed\n"
+
 # Executes a command on the instance (with ssh)
 # args[2] is the name of the instance;
 # args[3] and onwards are the command to run.
