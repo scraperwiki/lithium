@@ -204,7 +204,7 @@ exports.Linode = class Linode extends Instance
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
 _convert_to_instance = (l) =>
-  o = {name: l['LABEL'], state: l['STATUS'], id: l['LINODEID']}
+  o = {name: l['LABEL'].toString(), state: l['STATUS'], id: l['LINODEID']}
   # The config is derived from the name, by removing the "_1"
   # bit at the end.
   config = o.name.replace /_\d+$/, ''
