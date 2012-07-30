@@ -17,8 +17,8 @@ command.help =
     """
     Usage: li <command> [OPTIONS]
       Commands:
-        
-    """ + cmdhelp + '\n'
+
+    """ + '    ' + cmdhelp + '\n'
     process.stdout.write help
 
 # args[2] is the name of the instance to start
