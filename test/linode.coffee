@@ -139,6 +139,21 @@ describe 'Linode Instance', ->
     it 'gets the instance from the name', ->
       instance.id.should.equal 206097
 
+  describe 'when renaming an instance', ->
+    rename_nock = nocks.update_label()
+    error = null
+
+    before (done) ->
+      Linode.rename 'boxecutor_0', 'existingname1234', (err) ->
+        error = err
+        done()
+
+    it 'calls linode.update on the instance', ->
+      rename_nock.isDone().should.be.true
+
+    it 'returns an error when the command fails', ->
+      error.should.equal "This account already has a Linode with that label. Labels must be unique."
+
   describe 'when getting the public and private ip address from its linode id', ->
     list_ip_specific = nocks.list_ip_specific()
     public_ip_address = null

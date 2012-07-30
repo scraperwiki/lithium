@@ -373,6 +373,20 @@ exports.delete = ->
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
   connection: "keep-alive"
+
+exports.update_label = ->
+  nock('https://api.linode.com')
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get('/?api_key=fakeapikey&api_action=linode.update&LinodeID=206097&Label=existingname1234')
+  .reply 200,
+  """
+  {"ERRORARRAY":[{"ERRORCODE":8,"ERRORMESSAGE":"This account already has a Linode with that label. Labels must be unique."}],"DATA":{},"ACTION":"linode.update"}
+  """,
+  date: "Tue, 29 May 2012 10:01:12 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"
+
 # Linode addprivate
 exports.addprivate = ->
   return nock("https://api.linode.com")
