@@ -99,7 +99,7 @@ describe 'Linode Instance', ->
 
     it 'has the right name', ->
       linode.name.should.match /^boxecutor/
-      last_call[1].Label.should.equal 'boxecutor_1'
+      last_call[1].Label.should.equal 'boxecutor-1'
 
   describe 'when listing instances', ->
     list = null

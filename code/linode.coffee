@@ -126,7 +126,7 @@ exports.Linode = class Linode extends Instance
         number = mex numbers
         @client.call 'linode.update',
           'LinodeID': @linode_id
-          'Label': "#{@config.name}_#{number}"
+          'Label': "#{@config.name}-#{number}"
           , callback
 
   @_addprivate: (res, callback) =>
