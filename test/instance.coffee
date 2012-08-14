@@ -49,7 +49,7 @@ describe 'Instance', ->
       i._scp.calledThrice.should.be.true
 
     it 'uses ssh to exec remote hooks', ->
-      i._ssh.callCount.should.equal 5
+      i._ssh.callCount.should.be.above 4
 
     it 'execs local hooks locally', ->
       i._local_sh.calledTwice.should.be.true
