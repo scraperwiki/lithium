@@ -17,7 +17,7 @@ _li_complete ()   #  By convention, the function name
         COMPREPLY=( $( compgen -W '$(ls -m "$LITHIUM_CONFIG_PATH" | tr -d ',')' -- $cur ) )
         ;;
       deploy|destroy|help|restart|rename|sh|start|stop|ssh)
-        STUFF="$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/_/' )"
+        STUFF="$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/-/' )"
         COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
         ;;
     esac
