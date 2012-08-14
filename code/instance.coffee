@@ -117,7 +117,7 @@ exports.Instance = class Instance
   _call_hook: (hook, callback) =>
     if /^\d+_.+\.r\.\w/.test hook.file
       console.log "Running remote #{hook.file}"
-      @sh "sh /root/#{hook.file}", callback
+      @sh "sh /root/#{hook.file} #{@name}", callback
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "Running local #{hook.file}"
       @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
