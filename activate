@@ -58,3 +58,10 @@ deactivate () {
     NODE_PATH=$OLD_NODE_PATH
     unset -f deactivate
 }
+
+mocha () (
+  unset LITHIUM_CONFIG_PATH
+  unset LINODE_API_KEY
+  exec mocha "$@"
+)
+
