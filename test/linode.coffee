@@ -122,7 +122,7 @@ describe 'Linode Instance', ->
     it 'sets the instance members correctly', ->
       list[0].state.should.equal 1
       list[0].id.should.equal 206097
-      list[0].name.should.equal 'boxecutor_0'
+      list[0].name.should.equal 'boxecutor-0'
       list[0].config.name.should.equal 'boxecutor'
 
   describe 'when getting an instance from its name', ->
@@ -132,7 +132,7 @@ describe 'Linode Instance', ->
     instance = null
 
     before (done) ->
-      Linode.get 'boxecutor_0', (i) ->
+      Linode.get 'boxecutor-0', (i) ->
         instance = i
         done()
 
@@ -144,7 +144,7 @@ describe 'Linode Instance', ->
     error = null
 
     before (done) ->
-      Linode.rename 'boxecutor_0', 'existingname1234', (err) ->
+      Linode.rename 'boxecutor-0', 'existingname1234', (err) ->
         error = err
         done()
 
@@ -179,7 +179,7 @@ describe 'Linode Instance', ->
     nocks.list_ip_specific2()
 
     before (done) ->
-      Linode.destroy 'boxecutor_0', ->
+      Linode.destroy 'boxecutor-0', ->
         done()
 
     it 'calls linode.delete on the instance', ->
@@ -192,7 +192,7 @@ describe 'Linode Instance', ->
     nocks.list_ip_specific2()
 
     it 'calls linode.boot on the instance', (done) ->
-      Linode.get 'boxecutor_0', (instance) ->
+      Linode.get 'boxecutor-0', (instance) ->
         instance.start ->
           boot_nock.isDone().should.be.true
           done()
@@ -211,7 +211,7 @@ describe 'Linode Instance', ->
        done()
 
     it 'calls linode.shutdown on the instance', (done) ->
-      Linode.get 'boxecutor_0', (instance) ->
+      Linode.get 'boxecutor-0', (instance) ->
         instance.stop ->
           shutdown_nock.isDone().should.be.true
           done()
@@ -226,7 +226,7 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
 
     it 'calls linode.reboot on the instance', (done) ->
-      Linode.get 'boxecutor_0', (instance) ->
+      Linode.get 'boxecutor-0', (instance) ->
         instance.restart ->
           reboot_nock.isDone().should.be.true
           done()

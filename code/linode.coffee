@@ -122,7 +122,8 @@ exports.Linode = class Linode extends Instance
       @linode_id = res['LinodeID']
       @list (err, l) =>
         instances = _.filter l, ((x) => _s.startsWith x.name, @config.name)
-        numbers = _.map instances, (x) -> +x.name.replace(/.*_/, '')
+        # Strip out everything except the final number from the instance names.
+        numbers = _.map instances, (x) -> +x.name.replace(/[^\d]*(?=\d+$)/, '')
         number = mex numbers
         @client.call 'linode.update',
           'LinodeID': @linode_id
