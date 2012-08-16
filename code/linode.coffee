@@ -205,7 +205,7 @@ exports.Linode = class Linode extends Instance
 # into an instance of the Linode class.
 _convert_to_instance = (l) =>
   o = {name: l['LABEL'].toString(), state: l['STATUS'], id: l['LINODEID']}
-  # The config is derived from the name, by removing the "_1"
+  # The config is derived from the name, by removing the "-1"
   # bit at the end.
-  config = o.name.replace /_\d+$/, ''
+  config = o.name.replace /-\d+$/, ''
   new Linode config, o.id, o.name, o.state
