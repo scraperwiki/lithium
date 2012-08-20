@@ -122,7 +122,8 @@ exports.Linode = class Linode extends Instance
       @linode_id = res['LinodeID']
       @list (err, l) =>
         instances = _.filter l, (x) =>
-          x.name.match(/.*(?=-\d+$)/)[0] == @config.name
+          instance_config = x.name.match(/.*(?=-\d+$)/)
+          instance_config? and instance_config[0] == @config.name
 
         # Strip out everything except the final number from the instance names.
         numbers = _.map instances, (x) -> +x.name.replace(/.*(?=\d+$)/, '')
