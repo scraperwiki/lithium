@@ -6,6 +6,18 @@ LinodeClient = (require 'linode-api').LinodeClient
 
 client = new LinodeClient process.env['LINODE_API_KEY']
 
+client.call 'linode.ip.list',
+  LinodeID: 206102
+  , ->
+
+#client.call 'domain.resource.create',
+#  DomainID: 352960
+#  Type: 'A'
+#  Name: 'abbyy-0'
+#  Target: '176.58.107.125'
+#  TTL_sec: 3600
+# , ->
+
 #client.call 'avail.LinodePlans',null, ->
 #client.call 'avail.kernels',null, ->
 #client.call 'avail.distributions',null, ->
@@ -23,9 +35,9 @@ client = new LinodeClient process.env['LINODE_API_KEY']
 #  , ->
 #
 #client.call 'linode.list',null, ->
-client.call 'linode.ip.addprivate',
-  'LinodeID': 222837
-  , ->
+#client.call 'linode.ip.addprivate',
+#  'LinodeID': 222837
+#  , ->
 
 #client.call 'linode.list',
 #  'LinodeID': 206097

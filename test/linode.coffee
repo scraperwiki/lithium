@@ -69,6 +69,8 @@ describe 'Linode Instance', ->
     create_config_nock = nocks.create_config()
     kernel_nock = nocks.avail_kernels()
     nocks.linode_fresh()
+    nocks.list_ip_specific()
+    create_dns_a_record_nock = nocks.create_dns_a_record_nock()
 
     before (done) ->
       Linode.create 'boxecutor', (err, res) ->
@@ -100,6 +102,9 @@ describe 'Linode Instance', ->
     it 'has the right name', ->
       linode.name.should.match /^boxecutor/
       last_call[1].Label.should.equal 'boxecutor-1'
+
+    it 'creates a domain.resource with an A record to the boxname', ->
+      create_dns_a_record_nock.isDone().should.be.true
 
   describe 'when listing instances', ->
     list = null
@@ -221,6 +226,8 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
     nocks.list_ip_specific()
     nocks.list_ip_specific()
+    nocks.list_ip_specific()
+    nocks.list_ip_specific2()
     nocks.list_ip_specific2()
     nocks.list_ip_specific2()
     list_nock = nocks.list()

@@ -402,3 +402,18 @@ exports.addprivate = ->
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
   connection: "keep-alive"
+
+# Linode DNS create A record
+exports.create_dns_a_record_nock = ->
+  return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get("/?api_key=fakeapikey&api_action=domain.resource.create&DomainID=352960&Type=A&Name=boxecutor-1&Target=176.58.105.104&TTL_sec=3600")
+  .reply 200,
+    """
+      {"ERRORARRAY":[],
+       "DATA":{"ResourceID":2455048},
+       "ACTION":"domain.resource.create"}
+    """,
+  date: "Tue, 21 Aug 2012 10:31:06 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"

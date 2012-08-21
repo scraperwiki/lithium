@@ -32,6 +32,8 @@ exports.Linode = class Linode extends Instance
       @_create_disk
       @_disk_created
       @_create_linode_config
+      @_cache_ips
+      @_create_subdomain
     ], (err, result) =>
       # This is called at the end of the waterfall,
       # or if any of the callbacks returns an error.
@@ -129,9 +131,11 @@ exports.Linode = class Linode extends Instance
         numbers = _.map instances, (x) -> +x.name.replace(/.*(?=\d+$)/, '')
 
         number = mex numbers
+        @instance_name = "#{@config.name}-#{number}"
+
         @client.call 'linode.update',
           'LinodeID': @linode_id
-          'Label': "#{@config.name}-#{number}"
+          'Label': @instance_name
           , callback
 
   @_addprivate: (res, callback) =>
@@ -167,6 +171,21 @@ exports.Linode = class Linode extends Instance
       'Comments': @config.description
       'DiskList': @disk_id
       'RootDeviceNum': 1
+      , callback
+
+  @_cache_ips: (_, callback) =>
+    @_get_ips @linode_id, (err, pub, prv) =>
+      @public_ip = pub
+      @private_ip = prv
+      callback err, {}
+
+  @_create_subdomain: (_, callback) =>
+    @client.call 'domain.resource.create',
+      DomainID: 352960
+      Type: 'A'
+      Name: @instance_name
+      Target: @public_ip
+      TTL_sec: 3600
       , callback
 
   @_got_linode_id: (res, callback) =>
