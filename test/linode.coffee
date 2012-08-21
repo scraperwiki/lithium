@@ -53,7 +53,7 @@ describe 'Linode Instance', ->
         done()
 
     it 'calls avail.kernels', ->
-      kernel_nock.isDone().should.be.true 
+      kernel_nock.isDone().should.be.true
     it 'finds a kernel by version number', ->
       kernel_id.should.equal 145
 
