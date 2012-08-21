@@ -56,13 +56,14 @@ command.create =
         process.stdout.write('Created!\n')
         log_one_item item
 
-# args[2] is the name of the instance to destroy
+# args[2..] are the names of the instance to destroy
 command.destroy =
-  help: "destroy <instance-name>     Destroy an instance"
+  help: "destroy <instance-name> ... Destroy an instance (or instances)"
   run: (args) ->
-    process.stdout.write "Destroying #{args[2]}...\n"
-    Linode.destroy args[2], ->
-      process.stdout.write "Destroyed\n"
+    async.forEach args[2...], (item, callback) ->
+      Linode.destroy item, ->
+        process.stdout.write "Destroyed #{item}\n"
+        callback()
 
 # renames the instance args[2] to args[3]
 command.rename =
