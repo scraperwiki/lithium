@@ -16,5 +16,5 @@
         "should": ">0",
         "sinon": ">0"
     },
-    "engine": "node 0.6.x",
+    "engines": {"node": "0.6.x"}
 }
