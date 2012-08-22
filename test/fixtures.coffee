@@ -433,7 +433,7 @@ exports.domain_resource_list = ->
          {"DOMAINID":352960,"PORT":0,"RESOURCEID":2454925,"NAME":"",
           "WEIGHT":0,"TTL_SEC":0,"TARGET":"custmx.cscdns.net",
           "PRIORITY":5,"PROTOCOL":"","TYPE":"MX"},
-         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2455909,"NAME":"boxecutor-1",
+         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2455909,"NAME":"boxecutor-0",
           "WEIGHT":5,"TTL_SEC":0,"TARGET":"176.58.114.80","PRIORITY":10,
           "PROTOCOL":"","TYPE":"a"},
          {"DOMAINID":352960,"PORT":80,"RESOURCEID":2455777,"NAME":"vanilla-1",

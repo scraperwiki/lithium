@@ -51,7 +51,7 @@ exports.Linode = class Linode extends Instance
              DomainID: 352960
              , (err, res) =>
                r = _.find res, (x) =>
-                 x.NAME == @instance_name
+                 x.NAME == name
                @client.call 'domain.resource.delete',
                  DomainID: 352960
                  ResourceID: r.RESOURCEID
