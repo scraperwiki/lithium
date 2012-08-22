@@ -46,8 +46,16 @@ exports.Linode = class Linode extends Instance
       @client.call 'linode.delete',
          'LinodeID': instance.id
          'skipChecks': true
-         , (err, res) ->
-           callback()
+         , (err, res) =>
+           @client.call 'domain.resource.list',
+             DomainID: 352960
+             , (err, res) =>
+               r = _.find res, (x) =>
+                 x.NAME == @instance_name
+               @client.call 'domain.resource.delete',
+                 DomainID: 352960
+                 ResourceID: r.RESOURCEID
+                 , callback
 
   @rename: (name, newname, callback) ->
     @get name, (instance) =>

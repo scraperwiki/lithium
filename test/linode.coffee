@@ -182,6 +182,8 @@ describe 'Linode Instance', ->
     list_nock = nocks.list()
     nocks.list_ip_specific()
     nocks.list_ip_specific2()
+    domain_resource_list = nocks.domain_resource_list()
+    domain_resource_delete = nocks.domain_resource_delete()
 
     before (done) ->
       Linode.destroy 'boxecutor-0', ->
@@ -189,6 +191,13 @@ describe 'Linode Instance', ->
 
     it 'calls linode.delete on the instance', ->
       delete_nock.isDone().should.be.true
+
+    describe 'when deleting the subdomain', ->
+      it 'calls domain.resource.list on the instance', ->
+        domain_resource_list.isDone().should.be.true
+
+      it 'calls domain.resource.delete on the instance', ->
+        domain_resource_delete.isDone().should.be.true
 
   describe 'when starting an instance', ->
     boot_nock = nocks.boot()
