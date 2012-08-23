@@ -417,3 +417,50 @@ exports.create_dns_a_record_nock = ->
   date: "Tue, 21 Aug 2012 10:31:06 GMT"
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
+
+# List a domain's resources
+exports.domain_resource_list = ->
+  return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get("/?api_key=fakeapikey&api_action=domain.resource.list&DomainID=352960")
+  .reply 200,
+    """
+      {"ERRORARRAY":[],
+       "DATA":[
+         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2454924,
+          "NAME":"","WEIGHT":5,"TTL_SEC":0,"TARGET":"46.43.55.85",
+          "PRIORITY":10,"PROTOCOL":"","TYPE":"A"},
+         {"DOMAINID":352960,"PORT":0,"RESOURCEID":2454925,"NAME":"",
+          "WEIGHT":0,"TTL_SEC":0,"TARGET":"custmx.cscdns.net",
+          "PRIORITY":5,"PROTOCOL":"","TYPE":"MX"},
+         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2455909,"NAME":"boxecutor-0",
+          "WEIGHT":5,"TTL_SEC":0,"TARGET":"176.58.114.80","PRIORITY":10,
+          "PROTOCOL":"","TYPE":"a"},
+         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2455777,"NAME":"vanilla-1",
+          "WEIGHT":5,"TTL_SEC":3600,"TARGET":"176.58.121.92","PRIORITY":10,
+          "PROTOCOL":"","TYPE":"A"},
+         {"DOMAINID":352960,"PORT":80,"RESOURCEID":2454926,"NAME":"www",
+          "WEIGHT":5,"TTL_SEC":0,"TARGET":"46.43.55.85","PRIORITY":10,
+          "PROTOCOL":"","TYPE":"A"}
+         ],
+        "ACTION":"domain.resource.list"}
+    """,
+  date: "Wed, 22 Aug 2012 08:25:03 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"
+
+exports.domain_resource_delete = ->
+  return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get("/?api_key=fakeapikey&api_action=domain.resource.delete&DomainID=352960&ResourceID=2455909")
+  .reply 200,
+    """
+      {"ERRORARRAY":[],
+       "DATA":{"ResourceID":2455909},
+       "ACTION":"domain.resource.delete"}
+    """,
+  date: "Wed, 22 Aug 2012 08:30:08 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"
