@@ -117,6 +117,24 @@ command.deploy =
         process.exit code
       instance.run_hooks callback
 
+# Makes a comment on an instance
+command.comment =
+  help: "comment <name> [<comment>]  Make or display a comment on instance"
+  run: (args) ->
+    if args[3]?
+      process.stdout.write "Making comment..."
+      Linode.set_comment args[2], args[3], (err, res) ->
+        if err?
+          console.log err
+        else
+          console.log "done"
+    else
+      Linode.get_comment args[2], (err, comment) ->
+        if err?
+          console.log err
+        else
+          console.log "#{args[2]}: #{comment}"
+
 # Displays a list of instances
 command.list =
   help: "list                        List instances"

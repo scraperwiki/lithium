@@ -60,10 +60,27 @@ exports.Linode = class Linode extends Instance
   @rename: (name, newname, callback) ->
     @get name, (instance) =>
       @client.call 'linode.update',
-         'LinodeID': instance.id
-         'Label': newname
+          'LinodeID': instance.id
+          'Label': newname
          , (err, res) ->
-           callback(err)
+           callback err
+
+  @get_comment: (name, callback) ->
+    @get name, (instance) =>
+      @client.call 'linode.config.list',
+          'LinodeID': instance.id
+        , (err, res) ->
+          callback err, res[0].Comments
+
+  @set_comment: (name, comment, callback) ->
+    @get name, (instance) =>
+      @_get_linode_config_id instance, (err, ConfigID) =>
+        @client.call 'linode.config.update',
+            'LinodeID': instance.id
+            'ConfigID': ConfigID
+            'Comments': comment
+          , (err, res) ->
+            callback err, res
 
   # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
   # is a error, and *res* is an array of instances.
@@ -119,6 +136,12 @@ exports.Linode = class Linode extends Instance
   # Get a config's corresponding Linode plan
   @_get_config_linode_plan: (callback) =>
     @_get_plan @config.ram, @config.disk_size, callback
+
+  @_get_linode_config_id: (instance, callback) =>
+    @client.call 'linode.config.list',
+        'LinodeID': instance.id
+      , (err, res) ->
+        callback err, res[0].ConfigID
 
   @_linode_create: (plan_id, callback) =>
     @client.call 'linode.create',
