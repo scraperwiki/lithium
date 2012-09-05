@@ -121,8 +121,11 @@ exports.Instance = class Instance
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "Running local #{hook.file}"
       hooks_dir="#{@config_path}/#{hook.config_name}/hooks"
+      oldcwd = process.cwd()
       process.chdir hooks_dir
-      @_local_sh "#{hooks_dir}/#{hook.file}", [@name], callback
+      @_local_sh "#{hooks_dir}/#{hook.file}", [@name], ->
+        process.chdir oldcwd
+        callback()
     else
       console.log "(Ignoring #{hook.file})"
       callback()
