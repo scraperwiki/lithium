@@ -120,7 +120,9 @@ exports.Instance = class Instance
       @sh "sh /root/#{hook.file} #{@name}", callback
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "Running local #{hook.file}"
-      @_local_sh "#{@config_path}/#{hook.config_name}/hooks/#{hook.file}", [@name], callback
+      hooks_dir="#{@config_path}/#{hook.config_name}/hooks"
+      process.chdir hooks_dir
+      @_local_sh "#{hooks_dir}/#{hook.file}", [@name], callback
     else
       console.log "(Ignoring #{hook.file})"
       callback()
