@@ -1,6 +1,8 @@
 # linode.coffee
 # ScraperWiki Limited.  2012.
 
+fs           = require 'fs'
+
 LinodeClient = (require 'linode-api').LinodeClient
 _            = require('underscore')
 _s           = require('underscore.string')
@@ -179,7 +181,7 @@ exports.Linode = class Linode extends Instance
       'Label': 'system'
       'Size': @config.disk_size * 1000
       'rootPass': Math.random() + "" + Math.random()
-      'rootSSHKey': LithiumConfig.sshkey_public()
+      'rootSSHKey': fs.readFileSync(LithiumConfig.sshkey_public, 'ascii')
       , callback
 
   @_disk_created: (res, callback) =>

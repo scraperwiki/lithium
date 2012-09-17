@@ -6,6 +6,7 @@ LithiumConfig = require('lithium_config').LithiumConfig
 
 describe 'Instance', ->
   [i, callback] = [null, null]
+  LithiumConfig.config_path = 'test/class'
 
   beforeEach ->
     i = new Instance 'boxecutor', 12121, 'boxecutor_2'

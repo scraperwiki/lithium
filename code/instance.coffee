@@ -13,7 +13,6 @@ cf            = require 'config'
 LithiumConfig = require('lithium_config').LithiumConfig
 
 exports.Instance = class Instance
-  config_path: LithiumConfig.server_class_path()
 
   constructor: (config, id, name, state, ip) ->
     @config = new cf.Config config if config?
@@ -120,7 +119,7 @@ exports.Instance = class Instance
       @sh "sh /root/#{hook.file} #{@name}", callback
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "Running local #{hook.file}"
-      hooks_dir="#{@config_path}/#{hook.config_name}/hooks"
+      hooks_dir="#{LithiumConfig.config_path}/#{hook.config_name}/hooks"
       oldcwd = process.cwd()
       process.chdir hooks_dir
       @_local_sh "#{hooks_dir}/#{hook.file}", [@name], ->
