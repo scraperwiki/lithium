@@ -3,7 +3,7 @@
 ## Controlling sysadmin insanity
 
 Lithium is a system of configurations and a command line tool to 
-control cloud based server instances.
+control cloud based server instances. Currently it supports Linode.
 
 ### Install ###
 To install prequisites:
@@ -11,7 +11,7 @@ To install prequisites:
     npm -f install
 
 (The '-f' ought not to be required, but is, because of a bug in 
-the linode API).
+the linode-api package).
 
 ### Keeping Current ###
 
@@ -21,7 +21,7 @@ interlinked repositories.  Assuming these have already been set
 up in adjacent directories and you are already in the directory
 that contains them all, then:
 
-    for a in lithium/ swops/ swops-secret/ cobalt/ deployment-hooks/
+    for a in lithium/ swops/ swops-secret/ cobalt/
     do
         (cd $a;git pull)
     done
