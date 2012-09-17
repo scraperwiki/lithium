@@ -2,11 +2,13 @@ should = require 'should'
 sinon = require 'sinon'
 
 Instance = require('instance').Instance
-LithiumConfig = require('lithium_config').LithiumConfig
+settings = (require 'settings').settings
 
 describe 'Instance', ->
   [i, callback] = [null, null]
-  LithiumConfig.config_path = 'test/class'
+
+  before ->
+    settings.config_path = 'test/class'
 
   beforeEach ->
     i = new Instance 'boxecutor', 12121, 'boxecutor_2'
@@ -25,7 +27,7 @@ describe 'Instance', ->
   describe 'sh (run a command)', ->
 
     it 'should find the private key', ->
-      key = LithiumConfig.sshkey_private
+      key = settings.sshkey_private
       key.length.should.be.above 1
 
     it 'calls ssh', ->

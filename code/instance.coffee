@@ -1,4 +1,3 @@
-#
 # Instance interface.
 spawn         = require('child_process').spawn
 fs            = require 'fs'
@@ -10,7 +9,7 @@ async         = require 'async'
 kexec         = require 'kexec'
 
 cf            = require 'config'
-LithiumConfig = require('lithium_config').LithiumConfig
+settings      = (require 'settings').settings
 
 exports.Instance = class Instance
 
@@ -52,11 +51,11 @@ exports.Instance = class Instance
   # Run a shell command as root on the server.
   # *command* is a list (of strings).
   sh: (command, callback) ->
-    @_ssh LithiumConfig.sshkey_private, command, callback
+    @_ssh settings.sshkey_private, command, callback
 
   # Login interactively, using SSH.
   ssh: (username) ->
-    key = LithiumConfig.sshkey_private
+    key = settings.sshkey_private
     args = _common_ssh_args key
     extra = ["#{username}@#{@ip_address}"]
     args = args.concat extra
@@ -66,7 +65,7 @@ exports.Instance = class Instance
   # Copy files to the instance
   cp: (files, callback) ->
     if files.length > 0
-      @_scp LithiumConfig.sshkey_private, files, callback
+      @_scp settings.sshkey_private, files, callback
     else callback
 
   # Copy entire tree of files to the instance.
@@ -79,7 +78,7 @@ exports.Instance = class Instance
   # as snack/wozzle (ending up in ~/snack/wozzle where ~ is the
   # home directory on the remote machine).
   cpdir: (dir, callback) ->
-    @_scp LithiumConfig.sshkey_private, [dir+'/.'], callback, true
+    @_scp settings.sshkey_private, [dir+'/.'], callback, true
 
   # Copy & run hooks on instance
   # TODO: coupled
@@ -119,7 +118,7 @@ exports.Instance = class Instance
       @sh "sh /root/#{hook.file} #{@name}", callback
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "Running local #{hook.file}"
-      hooks_dir="#{LithiumConfig.config_path}/#{hook.config_name}/hooks"
+      hooks_dir="#{settings.config_path}/#{hook.config_name}/hooks"
       oldcwd = process.cwd()
       process.chdir hooks_dir
       @_local_sh "#{hooks_dir}/#{hook.file}", [@name], ->
