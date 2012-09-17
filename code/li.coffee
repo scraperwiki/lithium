@@ -202,7 +202,7 @@ exports.main = (args) ->
   else if not cmd_name?
     command['help'].run(args)
   else
-    process.stderr.write("Try li help for help, not #{args}\n")
+    process.stderr.write("I don't understand '#{args[1]}', try li help\n")
 
 if _s.endsWith process.argv[1], 'li.coffee'
   exports.main()
