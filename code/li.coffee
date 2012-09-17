@@ -52,9 +52,11 @@ command.create =
   run: (args) ->
     process.stdout.write('Creating...\n')
     Linode.create args[2], (dummy_, item) ->
-      Linode.get item.name, (item) ->
-        process.stdout.write('Created!\n')
-        log_one_item item
+      Linode.get item.name, (instance) ->
+        instance.start ->
+          instance.run_hooks (code) ->
+            process.stdout.write('Created!\n')
+            log_one_item instance
 
 # args[2..] are the names of the instance to destroy
 command.destroy =
