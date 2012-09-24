@@ -55,8 +55,10 @@ command.create =
       Linode.get item.name, (instance) ->
         instance.start ->
           instance.run_hooks (code) ->
-            process.stdout.write('Created!\n')
             log_one_item instance
+            if code is null then code = 0
+            console.log "Exit code: #{code}"
+            process.exit code
 
 # args[2..] are the names of the instance to destroy
 command.destroy =
