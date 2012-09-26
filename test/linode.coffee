@@ -68,8 +68,8 @@ describe 'Linode Instance', ->
     distro_nock = nocks.avail_distro()
     create_config_nock = nocks.create_config()
     kernel_nock = nocks.avail_kernels()
-    nocks.linode_fresh()
-    nocks.list_ip_specific()
+    linode_fresh_nock = nocks.linode_fresh()
+    list_nock = nocks.list_ip_specific()
     create_dns_a_record_nock = nocks.create_dns_a_record_nock()
 
     before (done) ->

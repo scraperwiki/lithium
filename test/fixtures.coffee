@@ -224,7 +224,7 @@ exports.linode_update = ->
   connection: 'keep-alive'
 
 exports.linode_fresh = ->
-  nock('https://api.linode.com')
+  return nock('https://api.linode.com')
   # 206102 must match the LinodeID returned in the call to linode.create.
   .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
   .get('/?api_key=fakeapikey&api_action=linode.list&LinodeID=206102')
