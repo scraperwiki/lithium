@@ -121,6 +121,19 @@ command.deploy =
         process.exit code
       instance.run_hooks callback
 
+# Run all, or a single hook(s) on a specified instance by config
+# args[2] is the instance
+# args[3] is the config
+# args[4] is the optional hook name
+command.runhook =
+  help: "runhook <instance-name> <config> [hook]     Run deployment hook on instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      if args[4]?
+        instance.run_one_hook args[3], args[4], ->
+      else
+        instance.run_config_hooks args[3], ->
+
 # Makes a comment on an instance
 command.comment =
   help: "comment <name> [<comment>]  Make or display a comment on instance"
