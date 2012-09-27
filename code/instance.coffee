@@ -95,6 +95,9 @@ exports.Instance = class Instance
     async.forEachSeries configs, @run_config_hooks, callback
 
   run_config_hooks: (config, callback) =>
+    if typeof(config) == 'string'
+      config = new cf.Config config
+
     console.log "Running hooks for #{config.name}"
 
     @cpdir config.hooks_dir, (exit_code) =>
@@ -108,6 +111,12 @@ exports.Instance = class Instance
       things = _.map files, (h) ->
         {config_name: config.name, file: h}
       async.forEachSeries things, @_call_hook, callback
+
+   run_one_hook: (config_name, hook_name, callback) =>
+     config = new cf.Config config_name
+     hook = {config_name: config.name, file: hook_name}
+     @cpdir config.hooks_dir, (exit_code) =>
+       @_call_hook(hook, callback) if exit_code is 0
 
 
   #### Private methods ####
