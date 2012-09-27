@@ -1,6 +1,7 @@
 should  = require 'should'
 sinon = require 'sinon'
 _ = require 'underscore'
+exec = (require 'child_process').exec
 
 nocks = require './fixtures'
 
@@ -12,6 +13,8 @@ describe 'Linode Instance', ->
   before ->
     spy = sinon.spy Linode.client, 'call'
 
+  afterEach ->
+    exec("rm var/ipcache/*")
 
   describe 'finding the plan', ->
     plan_id = null

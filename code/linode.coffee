@@ -241,7 +241,7 @@ exports.Linode = class Linode extends Instance
 
   @_get_ips: (linode_id, callback) ->
     # If we have a cache file updated in the last day, use that
-    cachefile = "./var/ipcache/#{linode_id}.json"
+    cachefile = "var/ipcache/#{linode_id}.json"
     date = (new Date()).getTime()
     if path.existsSync(cachefile)
       json = JSON.parse fs.readFileSync cachefile, 'ascii'
