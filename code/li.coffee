@@ -109,18 +109,6 @@ command.ssh =
     Linode.get instancename, (instance) ->
       instance.ssh username
 
-# Deploys an instance by running all its hooks
-# args[2] is the instance
-command.deploy =
-  help: "deploy <instance-name>      Run deployment hooks on instance [31m[OBSOLESCENT][0m"
-  run: (args) ->
-    Linode.get args[2], (instance) ->
-      callback = (code) ->
-        if code is null then code = 0
-        console.log "Exit code: #{code}"
-        process.exit code
-      instance.run_hooks callback
-
 # Run all, or a single hook(s) on a specified instance by config
 # args[2] is the instance
 # args[3] is the config
