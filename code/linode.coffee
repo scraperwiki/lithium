@@ -5,6 +5,8 @@ LinodeClient = (require 'linode-api').LinodeClient
 _            = require('underscore')
 _s           = require('underscore.string')
 async        = require 'async'
+fs           = require 'fs'
+path         = require 'path'
 
 mex           = (require 'utility').mex
 LithiumConfig = (require 'lithium_config').LithiumConfig
@@ -238,15 +240,26 @@ exports.Linode = class Linode extends Instance
       callback err, k['KERNELID']
 
   @_get_ips: (linode_id, callback) ->
-   @client.call 'linode.ip.list',
-     'LinodeID': linode_id
-     , (err, res) ->
-       public_record = _.find res, (r) -> r.ISPUBLIC is 1
-       private_record = _.find res, (r) -> r.ISPUBLIC is 0
-       if private_record?
-         callback err, public_record.IPADDRESS, private_record.IPADDRESS
-       else
-         callback err, public_record.IPADDRESS, null
+    # If we have a cache file updated in the last day, use that
+    cachefile = "./var/ipcache/#{linode_id}.json"
+    date = (new Date()).getTime()
+    if path.existsSync(cachefile)
+      json = JSON.parse fs.readFileSync cachefile, 'ascii'
+      if (date - json.date_cached) / 86400000 < 1
+        callback null, json.public_ip, json.private_ip
+    @client.call 'linode.ip.list',
+      'LinodeID': linode_id
+      , (err, res) ->
+        pub_record = _.find res, (r) -> r.ISPUBLIC is 1
+        priv_record = _.find res, (r) -> r.ISPUBLIC is 0
+        privip = if priv_record? then priv_record.IPADDRESS else null
+        pubip = if pub_record? then pub_record.IPADDRESS else null
+        cache =
+          date_cached: date
+          public_ip: pubip
+          private_ip: privip
+        fs.writeFileSync cachefile, JSON.stringify(cache), 'ascii'
+        callback err, pubip, privip
 
   @_get_config: (instance, callback) =>
     @client.call 'linode.config.list',
