@@ -116,11 +116,13 @@ command.ssh =
 command.runhook =
   help: "runhook <instance-name> <config> [hook]     Run deployment hook on instance"
   run: (args) ->
-    Linode.get args[2], (instance) ->
-      if args[4]?
-        instance.run_one_hook args[3], args[4], ->
+    [instance_name, config, hook] = [ args[2], args[3], args[4] ]
+
+    Linode.get instance_name, (instance) ->
+      if hook?
+        instance.run_one_hook config, hook, ->
       else
-        instance.run_config_hooks args[3], ->
+        instance.run_config_hooks config, ->
 
 # Makes a comment on an instance
 command.comment =
