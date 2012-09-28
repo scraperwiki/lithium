@@ -7,10 +7,10 @@ Linode = (require 'linode').Linode
 
 command = {}
 
-# args[1] is the name of the command, e.g. start
+# args[1] is the name of the command, e.g. staut
 # args[2..] are the command args
 command.help =
-  help: "help                        Show this help"
+  help: "help\t\t\t\tShow this help"
   run: (args) ->
     cmdhelp = (command[cmd].help for cmd of command).join('\n    ')
     help =
@@ -23,7 +23,7 @@ command.help =
 
 # args[2] is the name of the instance to start
 command.start =
-  help: "start <instance-name>       Start an instance"
+  help: "start <instance>\t\t\tStart an instance"
   run: (args) ->
     Linode.get args[2], (instance) ->
       instance.start ->
@@ -31,7 +31,7 @@ command.start =
 
 # args[2] is the name of the instance to stop
 command.stop =
-  help: "stop <instance-name>        Stop an instance"
+  help: "stop <instance>\t\t\tStop an instance"
   run: (args) ->
     Linode.get args[2], (instance) ->
       instance.stop ->
@@ -39,7 +39,7 @@ command.stop =
 
 # args[2] is the name of the instance to restart
 command.restart =
-  help: "restart <instance-name>     Restart an instance"
+  help: "restart <instance>\t\t\tRestart an instance"
   run: restart = (args) ->
     Linode.get args[2], (instance) ->
       instance.restart ->
@@ -48,7 +48,7 @@ command.restart =
 # Takes a config name, and creates an instance based on that config.
 # args[2] is the name of the config
 command.create =
-  help: "create <config-name>        Create a instance by config"
+  help: "create <config>\t\t\tCreate and deploy an instance by config"
   run: (args) ->
     process.stdout.write('Creating...\n')
     Linode.create args[2], (dummy_, item) ->
@@ -62,7 +62,7 @@ command.create =
 
 # args[2..] are the names of the instance to destroy
 command.destroy =
-  help: "destroy <instance-name> ... Destroy an instance (or instances)"
+  help: "destroy <instance> ...\t\tDestroy an instance (or instances)"
   run: (args) ->
     async.forEach args[2...], (item, callback) ->
       Linode.destroy item, ->
@@ -71,7 +71,7 @@ command.destroy =
 
 # renames the instance args[2] to args[3]
 command.rename =
-  help: "rename <name> <new-name>    Rename an instance"
+  help: "rename <name> <new-name>\t\tRename an instance"
   run: (args) ->
     process.stdout.write "Renaming #{args[2]}...\n"
     Linode.rename args[2], args[3], (err) ->
@@ -84,7 +84,7 @@ command.rename =
 # args[2] is the name of the instance;
 # args[3] and onwards are the command to run.
 command.sh =
-  help: "sh <instance-name> <cmd>    Execute a command on instance"
+  help: "sh <instance> <cmd>\t\t\tExecute a command on instance"
   run: (args) ->
     Linode.get args[2], (instance) ->
       callback = (code) ->
@@ -96,7 +96,7 @@ command.sh =
 # ssh into an instance.
 # args[2] is the name of the instance.
 command.ssh =
-  help: "ssh [user@]<instance-name>  Log in to instance using ssh"
+  help: "ssh [user@]<instance>\t\tLog in to instance via ssh"
   run: (args) ->
     name = args[2]
     l = name.split '@'
@@ -114,7 +114,7 @@ command.ssh =
 # args[3] is the config
 # args[4] is the optional hook name
 command.runhook =
-  help: "runhook <instance-name> <config> [hook]     Run deployment hook on instance"
+  help: "runhook <instance> <config> [hook]\tRun deployment hook(s)"
   run: (args) ->
     [instance_name, config, hook] = [ args[2], args[3], args[4] ]
 
@@ -126,7 +126,7 @@ command.runhook =
 
 # Makes a comment on an instance
 command.comment =
-  help: "comment <name> [<comment>]  Make or display a comment on instance"
+  help: "comment <instance> [comment]\tMake or display a comment"
   run: (args) ->
     if args[3]?
       process.stdout.write "Making comment..."
@@ -144,7 +144,7 @@ command.comment =
 
 # Displays a list of instances
 command.list =
-  help: "list                        List instances"
+  help: "list\t\t\t\tList instances"
   run: (args) ->
     process.stdout.write "Listing instances...\n"
     Linode.list (err, list) ->
@@ -173,7 +173,7 @@ LINODE_STATE =
     '3' : 'Rebooting'            # Shutting Down
 
 command.jobs =
-  help: "jobs                        List all Linode jobs"
+  help: "jobs\t\t\t\tList all Linode jobs"
   run: (args) ->
     # Linode lists jobs per instance, so we have to iterate over
     # each of our instances.
