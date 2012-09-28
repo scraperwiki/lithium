@@ -37,16 +37,21 @@ need to be set, but usually the activate script will set these
 as long as it finds the 'swops-secret' repository alongside this
 one.
 
-    Usage: li <command> OPTIONS
-            list      List instances
-            create    Create a instance by config
-            destroy   Destroy an instance
-
-            start     Start an instance
-            stop      Stop an instance
-            restart   Restart an instance
-            sh        Execute a command on an instance
-            deploy    Run deployment hooks on an instance [OBSOLESCENT]
+    Usage: li <command> [OPTIONS]
+     Commands:
+      help                                Show this help
+      start <instance>                    Start an instance
+      stop <instance>                     Stop an instance
+      restart <instance>                  Restart an instance
+      create <config>                     Create and deploy an instance by config
+      destroy <instance-name> ...         Destroy an instance (or instances)
+      rename <name> <new-name>            Rename an instance
+      sh <instance> <cmd>                 Execute a command on instance
+      ssh [user@]<instance-name>          Log in to instance via ssh
+      runhook <instance> <config> [hook]  Run deployment hook(s)
+      comment <instance> [<comment>]      Make or display a comment
+      list                                List instances
+      jobs                                List all Linode jobs
 
 ### Tests ###
 
@@ -81,5 +86,4 @@ Using lithium spends money.  Not much.
        ^                      |                       |
        `-------------------destroy--------------------'
                             
-
 
