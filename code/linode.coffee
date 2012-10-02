@@ -62,8 +62,17 @@ exports.Linode = class Linode extends Instance
       @client.call 'linode.update',
           'LinodeID': instance.id
           'Label': newname
-         , (err, res) ->
-           callback err
+         , (err, res) =>
+           @client.call 'domain.resource.list',
+             DomainID: 352960
+             , (err, res) =>
+               r = _.find res, (x) =>
+                 x.NAME == name
+               @client.call 'domain.resource.update',
+                 DomainID: 352960
+                 ResourceID: r.RESOURCEID
+                 Name: newname
+                 , callback
 
   @get_comment: (name, callback) ->
     @get name, (instance) =>
