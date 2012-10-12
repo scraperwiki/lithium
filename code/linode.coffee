@@ -13,7 +13,7 @@ settings      = (require 'settings').settings
 Instance      = (require 'instance').Instance
 
 exports.Linode = class Linode extends Instance
-  api_key = process.env['LINODE_API_KEY']
+  api_key = settings.linode_api_key
   api_key = 'fakeapikey' if not api_key?
 
   # Do Not Assign
