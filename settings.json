@@ -1,0 +1,10 @@
+{
+    "sshkey_public": "/home/chris/swops-secret/id_dsa.pub",
+    "sshkey_private": "/home/chris/swops-secret/id_dsa",
+    "config_path": "/home/chris/swops-secret/lithium/class",
+
+    "domain": { 
+        "name": "scraperwiki.net",
+        "ttl_seconds": "300"
+     }
+}
