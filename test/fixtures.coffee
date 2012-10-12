@@ -464,3 +464,18 @@ exports.domain_resource_delete = ->
   "content-type": "text/html; charset=UTF-8"
   "transfer-encoding": "chunked"
   connection: "keep-alive"
+
+exports.domain_resource_update = ->
+  return nock("https://api.linode.com")
+  .filteringPath(/api_key=[^&]*/g, 'api_key=fakeapikey')
+  .get("/?api_key=fakeapikey&api_action=domain.resource.update&DomainID=352960&ResourceID=2455909&Name=existingname1234")
+  .reply 200,
+    """
+      {"ERRORARRAY":[],
+       "DATA":{"ResourceID":2455909},
+       "ACTION":"domain.resource.update"}
+    """,
+  date: "Wed, 22 Aug 2012 08:30:08 GMT"
+  "content-type": "text/html; charset=UTF-8"
+  "transfer-encoding": "chunked"
+  connection: "keep-alive"

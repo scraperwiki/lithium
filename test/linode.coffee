@@ -146,6 +146,8 @@ describe 'Linode Instance', ->
 
   describe 'when renaming an instance', ->
     rename_nock = nocks.update_label()
+    domain_resource_list = nocks.domain_resource_list()
+    domain_resource_update = nocks.domain_resource_update()
     error = null
 
     before (done) ->
@@ -156,8 +158,8 @@ describe 'Linode Instance', ->
     it 'calls linode.update on the instance', ->
       rename_nock.isDone().should.be.true
 
-    it 'returns an error when the command fails', ->
-      error.should.equal "This account already has a Linode with that label. Labels must be unique."
+    it 'calls domain.resource.update', ->
+      domain_resource_update.isDone().should.be.true
 
   describe 'when getting the public and private ip address from its linode id', ->
     list_ip_specific = nocks.list_ip_specific()

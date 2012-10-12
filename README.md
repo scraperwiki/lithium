@@ -10,9 +10,6 @@ To install prequisites:
 
     npm -f install
 
-(The '-f' ought not to be required, but is, because of a bug in 
-the linode-api package).
-
 ### Keeping Current ###
 
 Every now and then you'll need to get fresh copies of the
@@ -28,14 +25,11 @@ that contains them all, then:
 
 ### Usage ###
 
+Copy settings-example.json to settings.json and add your public/private key/config paths and your Linode API key.
+
 Activate the environment (fiddles with PATH etc):
 
     . activate
-
-The environment variables LINODE\_API\_KEY and LITHIUM\_CONFIG\_PATH
-need to be set, but usually the activate script will set these
-as long as it finds the 'swops-secret' repository alongside this
-one.
 
     Usage: li <command> [OPTIONS]
      Commands:
