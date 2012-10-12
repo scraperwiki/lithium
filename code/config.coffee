@@ -2,7 +2,7 @@ fs   = require 'fs'
 path = require 'path'
 _    = require 'underscore'
 
-li_cfg = (require 'lithium_config').LithiumConfig
+settings = (require 'settings').settings
 
 exports.Config = class Config
   hooks: []
@@ -14,7 +14,7 @@ exports.Config = class Config
     @
 
   _load_config: (name) ->
-    config_path = "#{li_cfg.server_class_path()}/#{name}/config.json"
+    config_path = "#{settings.config_path}/#{name}/config.json"
     return unless path.existsSync config_path
     text = fs.readFileSync config_path
     config = JSON.parse text
@@ -27,4 +27,4 @@ exports.Config = class Config
         @[key] = value if key isnt 'include'
 
   _load_hooks: ->
-    @hooks_dir = "#{li_cfg.server_class_path()}/#{@name}/hooks"
+    @hooks_dir = "#{settings.config_path}/#{@name}/hooks"
