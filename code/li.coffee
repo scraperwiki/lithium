@@ -88,7 +88,6 @@ command.sh =
   run: (args) ->
     Linode.get args[2], (instance) ->
       callback = (code) ->
-        console.log "[22;32mExit code[0m: #{code}"
         process.exit code
 
       instance.sh (args[3..].join ' '), callback

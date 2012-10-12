@@ -152,14 +152,10 @@ exports.Instance = class Instance
 
       ssh = spawn 'ssh', args
       ssh.stdout.on 'data', (data) ->
-        if stdout_ends_in_newline
-          process.stdout.write '[1;32mssh[0m: '
         stuff = data.toString('ascii')
         process.stdout.write stuff
         stdout_ends_in_newline = /\n$/.test stuff
       ssh.stderr.on 'data', (data) ->
-        if stderr_ends_in_newline
-          process.stderr.write '[1;31mssh[0m: '
         stuff = data.toString('ascii')
         process.stderr.write stuff
         stderr_ends_in_newline = /\n$/.test stuff
