@@ -1,0 +1,5 @@
+{
+    "sshkey_public": "/path/to/public/ssh/key",
+    "sshkey_private": "/path/to/public/ssh/key",
+    "config_path": "/path/to/your/configs/directory",
+}
