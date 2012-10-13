@@ -3,6 +3,7 @@ path = require 'path'
 _    = require 'underscore'
 
 settings = (require 'settings').settings
+exists = fs.existsSync or path.existsSync
 
 exports.Config = class Config
   hooks: []
@@ -15,7 +16,7 @@ exports.Config = class Config
 
   _load_config: (name) ->
     config_path = "#{settings.config_path}/#{name}/config.json"
-    return unless path.existsSync config_path
+    return unless exists config_path
     text = fs.readFileSync config_path
     config = JSON.parse text
     if config.include?
