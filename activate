@@ -30,19 +30,6 @@ export LITHIUM_CONFIG_PATH=$(cat settings.json | coffee -e "settings = require('
 
 . code/li.completion
 
-if [ -z "$LINODE_API_KEY" ]
-then
-    [ -e ../swops-secret/keys.sh ] &&
-      . ../swops-secret/keys.sh
-fi
-
-if [ -z "$LINODE_API_KEY" ]
-then
-    printf "Note: LINODE_API_KEY is not set\n"
-    printf "(I already tried . ../swops-secret/keys.sh)\n"
-fi
-
-
 PS1="[li]$PS1"
 deactivate () {
     complete -r li
@@ -51,9 +38,3 @@ deactivate () {
     NODE_PATH=$OLD_NODE_PATH
     unset -f deactivate
 }
-
-mocha () (
-  unset LINODE_API_KEY
-  exec mocha "$@"
-)
-
