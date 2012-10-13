@@ -8,7 +8,7 @@
         "underscore.string": ">0",
         "linode-api": "0.1.2",
         "async": ">0",
-        "kexec": "0.0.3"
+        "kexec": "0.1.1"
     },
     "devDependencies": {
         "nock": "~0.13.0",
