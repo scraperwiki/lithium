@@ -3,6 +3,7 @@ sinon = require 'sinon'
 _ = require 'underscore'
 
 nocks = require './fixtures'
+settings = (require 'settings').settings
 
 Linode = (require '../code/linode').Linode
 
@@ -11,6 +12,8 @@ describe 'Linode Instance', ->
   spy = null
   before ->
     spy = sinon.spy Linode.client, 'call'
+    settings.linode_api_key = 'fakeapikey'
+    settings.config_path = 'test/class'
 
 
   describe 'finding the plan', ->
@@ -73,6 +76,9 @@ describe 'Linode Instance', ->
     create_dns_a_record_nock = nocks.create_dns_a_record_nock()
 
     before (done) ->
+      read_key_stub = sinon.stub(Linode, '_read_public_ssh_key')
+        .returns("fakesshkey")
+
       Linode.create 'boxecutor', (err, res) ->
         linode = res
         err_from_create = err
@@ -80,6 +86,9 @@ describe 'Linode Instance', ->
         us = _.filter spy.args, (x) -> x[0] == 'linode.update'
         last_call = us[us.length-1]
         done()
+
+    after ->
+      Linode._read_public_ssh_key.restore()
 
     it 'calls linode.create', ->
       create_nock.isDone().should.be.true

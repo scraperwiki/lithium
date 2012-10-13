@@ -190,7 +190,7 @@ exports.Linode = class Linode extends Instance
       'Label': 'system'
       'Size': @config.disk_size * 1000
       'rootPass': Math.random() + "" + Math.random()
-      'rootSSHKey': fs.readFileSync(settings.sshkey_public, 'ascii')
+      'rootSSHKey': @_read_public_ssh_key()
       , callback
 
   @_disk_created: (res, callback) =>
@@ -264,6 +264,9 @@ exports.Linode = class Linode extends Instance
         'LinodeID': instance.id
       , (err, res) ->
         callback err, res[0]
+
+  @_read_public_ssh_key: ->
+    fs.readFileSync(settings.sshkey_public, 'ascii')
 
 # Convert the Linode API JSON representation for a linode server
 # into an instance of the Linode class.
