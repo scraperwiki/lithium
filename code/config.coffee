@@ -16,7 +16,7 @@ exports.Config = class Config
 
   _load_config: (name) ->
     config_path = "#{settings.config_path}/#{name}/config.json"
-    return unless exists(config_path)
+    throw "config #{name} doesn't exist!" unless exists(config_path)
     text = fs.readFileSync config_path
     config = JSON.parse text
 
