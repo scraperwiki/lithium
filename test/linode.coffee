@@ -3,18 +3,16 @@ sinon = require 'sinon'
 _ = require 'underscore'
 
 nocks = require './fixtures'
-settings = (require 'settings').settings
 
-Linode = (require '../code/linode').Linode
+Linode = require '../code/linode'
+settings = require 'settings'
+
 
 describe 'Linode Instance', ->
   #TODO: handle errors properly from linode
   spy = null
   before ->
     spy = sinon.spy Linode.client, 'call'
-    settings.linode_api_key = 'fakeapikey'
-    settings.config_path = 'test/class'
-
 
   describe 'finding the plan', ->
     plan_id = null

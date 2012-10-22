@@ -9,9 +9,9 @@ async         = require 'async'
 kexec         = require 'kexec'
 
 cf            = require 'config'
-settings      = (require 'settings').settings
+settings      = require 'settings'
 
-exports.Instance = class Instance
+class Instance
 
   constructor: (config, id, name, state, ip) ->
     @config = new cf.Config config if config?
@@ -211,3 +211,5 @@ _common_ssh_args = (key) -> [
   '-o', 'StrictHostKeyChecking=no',
   '-o', 'IdentitiesOnly=yes',
   '-i', key]
+
+module.exports = Instance

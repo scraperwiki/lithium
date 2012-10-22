@@ -1,8 +1,8 @@
 _       = require 'underscore'
 
-Instance = (require 'instance').Instance
+Instance = require 'instance'
 
-exports.Placebo = class Placebo extends Instance
+class Placebo extends Instance
   @instances: []
 
   @create: (config) ->
@@ -23,3 +23,4 @@ exports.Placebo = class Placebo extends Instance
 
   state: ->
 
+module.exports = Placebo

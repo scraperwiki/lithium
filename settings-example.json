@@ -1,6 +1,6 @@
 {
-    "sshkey_public": "/path/to/public/ssh/key",
-    "sshkey_private": "/path/to/public/ssh/key",
-    "config_path": "/path/to/your/configs/directory",
+    "sshkey_public": "../secret/id_dsa.pub",
+    "sshkey_private": "../secret/id_dsa",
+    "config_path": "../configs",
     "linode_api_key": "your linode api key"
 }

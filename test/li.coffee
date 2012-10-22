@@ -2,8 +2,8 @@ sinon = require 'sinon'
 should = require 'should'
 
 li = require 'li'
-Instance = (require 'instance').Instance
-Linode = (require 'linode').Linode
+Instance = require 'instance'
+Linode = require 'linode'
 
 describe 'li', ->
   mock = null

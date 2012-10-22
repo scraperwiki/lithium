@@ -27,7 +27,7 @@ PATH=$(pwd)/node_modules/.bin:$(pwd)/bin:$PATH
 # See http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_06_02
 export NODE_PATH=$(pwd)/code${NODE_PATH+:}${NODE_PATH}
 export LITHIUM_PATH=$(pwd)
-export LITHIUM_CONFIG_PATH=$(cat settings.json | coffee -e "settings = require('settings').settings;process.stdout.write settings.config_path")
+export LITHIUM_CONFIG_PATH=$(cat settings.json | coffee -e "settings = require 'settings';process.stdout.write settings.config_path")
 
 . code/li.completion
 

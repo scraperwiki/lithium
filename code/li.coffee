@@ -3,7 +3,7 @@
 _s = require 'underscore.string'
 async = require 'async'
 
-Linode = (require 'linode').Linode
+Linode = require 'linode'
 
 command = {}
 

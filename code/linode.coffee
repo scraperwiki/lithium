@@ -9,10 +9,10 @@ _s           = require('underscore.string')
 async        = require 'async'
 
 mex           = (require 'utility').mex
-settings      = (require 'settings').settings
-Instance      = (require 'instance').Instance
+settings      = require 'settings'
+Instance      = require 'instance'
 
-exports.Linode = class Linode extends Instance
+class Linode extends Instance
   api_key = settings.linode_api_key
   api_key = 'fakeapikey' if not api_key?
 
@@ -219,7 +219,7 @@ exports.Linode = class Linode extends Instance
       Type: 'A'
       Name: @instance_name
       Target: @public_ip
-      TTL_sec: 3600
+      #TTL_sec: 3600
       , callback
 
   @_got_linode_id: (res, callback) =>
@@ -276,3 +276,6 @@ _convert_to_instance = (l) =>
   # bit at the end.
   config = o.name.replace /-\d+$/, ''
   new Linode config, o.id, o.name, o.state
+
+
+module.exports = Linode

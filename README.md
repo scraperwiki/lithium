@@ -53,7 +53,7 @@ Note: Make sure LITHIUM\_CONFIG\_PATH and LINODE\_API\_KEY are unset before runn
 
 To run the tests
 
-    LITHIUM_CONFIG_PATH= mocha
+    npm test
 
 Keep the tests running 
 

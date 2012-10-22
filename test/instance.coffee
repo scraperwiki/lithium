@@ -1,8 +1,8 @@
 should = require 'should'
 sinon = require 'sinon'
 
-Instance = require('instance').Instance
-settings = (require 'settings').settings
+Instance = require 'instance'
+settings = require 'settings'
 
 describe 'Instance', ->
   [i, callback] = [null, null]
@@ -25,10 +25,6 @@ describe 'Instance', ->
     i._local_sh.restore()
 
   describe 'sh (run a command)', ->
-
-    it 'should find the private key', ->
-      key = settings.sshkey_private
-      key.length.should.be.above 1
 
     it 'calls ssh', ->
       i.sh 'cat /etc/passwd', callback

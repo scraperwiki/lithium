@@ -2,7 +2,7 @@ fs   = require 'fs'
 path = require 'path'
 _    = require 'underscore'
 
-settings = (require 'settings').settings
+settings = require 'settings'
 exists = fs.existsSync or path.existsSync
 
 exports.Config = class Config
@@ -16,7 +16,7 @@ exports.Config = class Config
 
   _load_config: (name) ->
     config_path = "#{settings.config_path}/#{name}/config.json"
-    throw "config #{name} doesn't exist!" unless exists(config_path)
+    return "config #{name} doesn't exist!" unless exists(config_path)
     text = fs.readFileSync config_path
     config = JSON.parse text
 

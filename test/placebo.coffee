@@ -3,9 +3,13 @@
 should  = require 'should'
 _       = require 'underscore'
 
-Placebo = (require '../code/placebo').Placebo
+Placebo =  require '../code/placebo'
+settings = require 'settings'
 
 describe 'Placebo', ->
+
+  settings.linode_api_key = 'fakeapikey'
+  settings.config_path = 'test/class'
 
   it 'can create a placebo instance with a config', ->
     instance = Placebo.create 'boxecutor'
