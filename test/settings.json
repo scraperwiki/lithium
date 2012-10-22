@@ -1,0 +1,6 @@
+{
+    "sshkey_public": "",
+    "sshkey_private": "",
+    "config_path": "test/class",
+    "linode_api_key": "fakeapikey"
+}
