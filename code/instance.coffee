@@ -149,6 +149,8 @@ class Instance
       args = args.concat extra
 
       ssh = spawn 'ssh', args
+      process.stdin.resume()
+      process.stdin.pipe ssh.stdin
       ssh.stdout.on 'data', (data) ->
         stuff = data.toString('ascii')
         process.stdout.write stuff
