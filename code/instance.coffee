@@ -114,7 +114,7 @@ class Instance
     config = new cf.Config config_name
     hook = {config_name: config.name, file: hook_name}
     @cpdir config.hooks_dir, (exit_code) =>
-      if exit_code is 0
+      if exit_code is not 0
         process.stderr.write "Failed to copy files #{config.hooks_dir}\n"
         callback 'cpdir error'
       else
