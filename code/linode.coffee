@@ -97,6 +97,8 @@ class Linode extends Instance
   @list: (verbose, callback) ->
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
+      # Sort by name.
+      list = _.sortBy list, 'name'
       requestArray = _.map list, (instance) ->
         { api_action: 'linode.config.list', LinodeID: instance.id }
       request
