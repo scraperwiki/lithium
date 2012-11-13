@@ -1,16 +1,17 @@
 # linode.coffee
 # ScraperWiki Limited.  2012.
 
-fs           = require 'fs'
+fs = require 'fs'
 
-LinodeClient = (require 'linode-api').LinodeClient
-_            = require('underscore')
-_s           = require('underscore.string')
-async        = require 'async'
+{LinodeClient} = require 'linode-api'
+_ = require 'underscore'
+_s = require 'underscore.string'
+async = require 'async'
+request = require 'request'
 
-mex           = (require 'utility').mex
-settings      = require 'settings'
-Instance      = require 'instance'
+{mex} = require 'utility'
+settings = require 'settings'
+Instance = require 'instance'
 
 class Linode extends Instance
   api_key = settings.linode_api_key
@@ -94,6 +95,27 @@ class Linode extends Instance
   # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
   # is a error, and *res* is an array of instances.
   @list: (callback) ->
+    @client.call 'linode.list', null, (err, res) =>
+      list = _.map res, _convert_to_instance
+      requestArray = _.map list, (instance) ->
+        { api_action: 'linode.config.list', LinodeID: instance.id }
+      request
+        url: "https://api.linode.com/"
+        qs:
+          api_key: api_key
+          api_action: 'batch'
+          api_requestArray: JSON.stringify requestArray
+        , (err, resp, body) =>
+          body = JSON.parse body
+          _.map _.zip(list, body), (item) ->
+            [list_item, body_item] = item
+            list_item.comments = body_item.DATA[0].Comments
+            return list_item
+          callback null, list
+
+  # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
+  # is a error, and *res* is an array of instances.
+  @_old_list: (callback) ->
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
       async.map list, (x, cb) =>

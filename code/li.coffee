@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 
+_ = require 'underscore'
 _s = require 'underscore.string'
 async = require 'async'
 
@@ -7,7 +8,7 @@ Linode = require 'linode'
 
 command = {}
 
-# args[1] is the name of the command, e.g. staut
+# args[1] is the name of the command, e.g. start
 # args[2..] are the command args
 command.help =
   help: "help\t\t\t\tShow this help"
@@ -148,22 +149,58 @@ command.comment =
 command.list =
   help: "list\t\t\t\tList instances"
   run: (args) ->
-    process.stdout.write "Listing instances...\n"
-    Linode.list (err, list) ->
-      if err?
-        console.log err
-      else
-        log_one_item item for item in list
+    if args[2] == '--help'
+      console.log colour_legend()
+    else
+      process.stdout.write "Listing instances..."
+      Linode.list (err, list) ->
+        process.stdout.write '\r' # so that line gets overwritten
+        if err?
+          console.log err
+        else
+          log_one_item item for item in list
 
 log_one_item = (item) ->
   state = friendly_state item.state
-  console.log "#{item.name} [#{item.config.name}] Pub:#{item.ip_address}#{if item.private_ip_address? then ' Priv:' + item.private_ip_address else ''} #{state}"
+  colour = pick_colour state
+  colour_off = pick_colour()
+  ipstuff = ''
+  if item.ip_address?
+    ipstuff += ' Pub:' + item.ip_address
+  if item.private_ip_address? 
+    ipstuff += ' Priv:' + item.private_ip_address
+  console.log "#{colour}#{item.name}#{colour_off} [#{item.config.name}]#{ipstuff} #{item.comments}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?
     LINODE_STATE[state]
   else
     "Unknown state: #{state}"
+
+pick_colour = (state) ->
+  # Pick a funky colour for each state (which is a short string).
+  # As a hack, if *state* is not supplied, then the colour off sequence is returned.
+  if not state?
+    s = '0'
+  else
+    # Colour ANSI escapes: http://pinterest.com/pin/39476934204045349/
+    the_colour =
+      BootFailed: '22;31;40'
+      Creating: '22;33;40'
+      New: '22;33'
+      Running: '1;32'
+      Terminated: '22;37;40'
+      Rebooting: '1;36'
+    s = the_colour[state]
+  return "\x1b[#{s}m"
+
+colour_legend = () ->
+  # Return a string that can be printed out
+  # to make a colour legend.
+  l = _.map _.values(LINODE_STATE), (s) ->
+    pick_colour(s) + s + pick_colour()
+  l.join ' '
+
 
 # Borrowed from https://svn.apache.org/repos/asf/libcloud/trunk/libcloud/compute/drivers/linode.py
 LINODE_STATE =
