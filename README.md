@@ -44,7 +44,7 @@ Activate the environment (fiddles with PATH etc):
       ssh [user@]<instance-name>          Log in to instance via ssh
       runhook <instance> <config> [hook]  Run deployment hook(s)
       comment <instance> [<comment>]      Make or display a comment
-      list                                List instances
+      list [--help] [--verbose]           List instances
       jobs                                List all Linode jobs
 
 ### Tests ###
