@@ -173,7 +173,7 @@ log_one_item = (item) ->
     ipstuff += ' Pub:' + item.ip_address
   if item.private_ip_address? 
     ipstuff += ' Priv:' + item.private_ip_address
-  console.log "#{colour}#{item.name}#{colour_off} [#{item.config.name}]#{ipstuff} #{item.comments}"
+  console.log "#{colour}#{item.name}#{colour_off} \x1b[22;37m[#{item.config.name}]#{ipstuff}\x1b[0m #{item.comments}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?
