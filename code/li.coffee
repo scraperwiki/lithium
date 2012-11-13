@@ -147,7 +147,7 @@ command.comment =
 
 # Displays a list of instances
 command.list =
-  help: "list\t\t\t\tList instances"
+  help: "list [--help] [--verbose]\t\tList instances"
   run: (args) ->
     if args[2] == '--help'
       console.log colour_legend()
