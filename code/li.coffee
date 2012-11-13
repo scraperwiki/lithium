@@ -116,12 +116,15 @@ command.runhook =
   help: "runhook <instance> <config> [hook]\tRun deployment hook(s)"
   run: (args) ->
     [instance_name, config, hook] = [ args[2], args[3], args[4] ]
+    finished = ->
+      console.log "runhook finished, exiting by force."
+      process.exit 0
 
     Linode.get instance_name, (instance) ->
       if hook?
-        instance.run_one_hook config, hook, ->
+        instance.run_one_hook config, hook, finished
       else
-        instance.run_config_hooks config, ->
+        instance.run_config_hooks config, finished
 
 # Makes a comment on an instance
 command.comment =
