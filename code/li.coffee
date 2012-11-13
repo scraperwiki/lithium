@@ -184,9 +184,8 @@ friendly_state = (state) ->
 pick_colour = (state) ->
   # Pick a funky colour for each state (which is a short string).
   # As a hack, if *state* is not supplied, then the colour off sequence is returned.
-  if not state?
-    s = '0'
-  else
+  s = '0'
+  if state?
     # Colour ANSI escapes: http://pinterest.com/pin/39476934204045349/
     the_colour =
       BootFailed: '22;31;40'
@@ -220,7 +219,7 @@ command.jobs =
   run: (args) ->
     # Linode lists jobs per instance, so we have to iterate over
     # each of our instances.
-    Linode.list (err, instances) ->
+    Linode.list no, (err, instances) ->
       if err?
         console.log err
       else
