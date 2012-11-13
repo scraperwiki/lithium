@@ -94,7 +94,7 @@ class Linode extends Instance
 
   # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
   # is a error, and *res* is an array of instances.
-  @list: (callback) ->
+  @list: (verbose, callback) ->
     @client.call 'linode.list', null, (err, res) =>
       list = _.map res, _convert_to_instance
       requestArray = _.map list, (instance) ->
@@ -111,19 +111,29 @@ class Linode extends Instance
             [list_item, body_item] = item
             list_item.comments = body_item.DATA[0].Comments
             return list_item
-          callback null, list
-
-  # Returns (by passing to the *callback* function) the arguments (err, res) where *err*
-  # is a error, and *res* is an array of instances.
-  @_old_list: (callback) ->
-    @client.call 'linode.list', null, (err, res) =>
-      list = _.map res, _convert_to_instance
-      async.map list, (x, cb) =>
-        @_get_ips x.id, ( (err, public_ip, private_ip) =>
-          x.ip_address = public_ip
-          x.private_ip_address = private_ip
-          cb null, x )
-      , (error, results) -> callback err, results
+          if verbose
+            requestArray = _.map list, (instance) ->
+              { api_action: 'linode.ip.list', LinodeID: instance.id }
+            request
+              url: "https://api.linode.com/"
+              qs:
+                api_key: api_key
+                api_action: 'batch'
+                api_requestArray: JSON.stringify requestArray
+              , (err, resp, body) =>
+                body = JSON.parse body
+                _.map _.zip(list, body), (item) ->
+                  [list_item, body_item] = item
+                  public_record = _.find body_item.DATA, (r) -> r.ISPUBLIC is 1
+                  private_record = _.find body_item.DATA, (r) -> r.ISPUBLIC is 0
+                  if private_record?
+                    list_item.private_ip_address = private_record.IPADDRESS
+                  if public_record?
+                    list_item.ip_address = public_record.IPADDRESS
+                  return list_item
+                callback null, list
+          else
+            callback null, list
 
   # Returns an instance given its name.
   # TODO: put err in to config

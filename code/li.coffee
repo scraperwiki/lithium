@@ -153,7 +153,11 @@ command.list =
       console.log colour_legend()
     else
       process.stdout.write "Listing instances..."
-      Linode.list (err, list) ->
+      if args[2] == '--verbose' or args[2] == '-v'
+        verbose = yes
+      else
+        verbose = no
+      Linode.list verbose, (err, list) ->
         process.stdout.write '\r' # so that line gets overwritten
         if err?
           console.log err
