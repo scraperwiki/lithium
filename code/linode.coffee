@@ -140,7 +140,7 @@ class Linode extends Instance
   # Returns an instance given its name.
   # TODO: put err in to config
   @get: (name, callback) ->
-    @list (err, list) ->
+    @list no, (err, list) ->
       k = _.find list, (n) ->
         n.name == name
       throw "instance not found" unless k?
@@ -190,7 +190,7 @@ class Linode extends Instance
 
   @_update_linode_label: (res, callback) =>
       @linode_id = res['LinodeID']
-      @list (err, l) =>
+      @list no, (err, l) =>
         instances = _.filter l, (x) =>
           instance_config = x.name.match(/.*(?=-\d+$)/)
           instance_config? and instance_config[0] == @config.name
