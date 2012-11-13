@@ -140,7 +140,7 @@ class Linode extends Instance
   # Returns an instance given its name.
   # TODO: put err in to config
   @get: (name, callback) ->
-    @list no, (err, list) ->
+    @list yes, (err, list) ->
       k = _.find list, (n) ->
         n.name == name
       throw "instance not found" unless k?
