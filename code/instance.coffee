@@ -8,13 +8,13 @@ async         = require 'async'
 # https://github.com/jprichardson/node-kexec
 kexec         = require 'kexec'
 
-cf            = require 'config'
+{Config}      = require 'config'
 settings      = require 'settings'
 
 class Instance
 
   constructor: (config, id, name, state, ip) ->
-    @config = new cf.Config config if config?
+    @config = new Config config if config?
     @id = id if id?
     @name = name if name?
     @state = state if state?
@@ -22,7 +22,7 @@ class Instance
 
   # Create a server ready to run. Somewhere on the internet.  # Servers are created in the "stopped" state.
   @create: (config, callback) ->
-    @config = new cf.Config config
+    @config = new Config config
 
   # Destroy a previously created server.
   @destroy: (instance, callback) ->
@@ -94,7 +94,7 @@ class Instance
 
   run_config_hooks: (config, callback) =>
     if typeof(config) == 'string'
-      config = new cf.Config config
+      config = new Config config
 
     console.log "Running hooks for #{config.name}"
 
@@ -111,7 +111,7 @@ class Instance
       async.forEachSeries things, @_call_hook, callback
 
   run_one_hook: (config_name, hook_name, callback) =>
-    config = new cf.Config config_name
+    config = new Config config_name
     hook = {config_name: config.name, file: hook_name}
     @cpdir config.hooks_dir, (exit_code) =>
       if exit_code is not 0
