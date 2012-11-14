@@ -165,8 +165,7 @@ command.list =
           log_one_item item for item in list
 
 log_one_item = (item) ->
-  state = friendly_state item.state
-  colour = pick_colour state
+  colour = pick_colour item.state
   colour_off = pick_colour()
   ipstuff = ''
   if item.ip_address?
@@ -182,37 +181,37 @@ friendly_state = (state) ->
     "Unknown state: #{state}"
 
 pick_colour = (state) ->
-  # Pick a funky colour for each state (which is a short string).
-  # As a hack, if *state* is not supplied, then the colour off sequence is returned.
+  # Pick a funky colour for each state (which is the small number used by linode)
+  # As a hack, if *state* is not supplied, then the colour-off sequence is returned.
   s = '0'
   if state?
     # Colour ANSI escapes: http://pinterest.com/pin/39476934204045349/
     the_colour =
-      BootFailed: '22;31;40'
-      Creating: '22;33;40'
-      New: '22;33'
-      Running: '1;32'
-      Terminated: '22;37;40'
-      Rebooting: '1;36'
+      '-2': '22;31;40'
+      '-1': '22;33;40'
+      '0': '22;33'
+      '1': '1;32'
+      '2': '22;37;40'
+      '3': '1;36'
     s = the_colour[state]
   return "\x1b[#{s}m"
 
 colour_legend = () ->
   # Return a string that can be printed out
   # to make a colour legend.
-  l = _.map _.values(LINODE_STATE), (s) ->
-    pick_colour(s) + s + pick_colour()
+  l = _.map _.pairs(LINODE_STATE), (s) ->
+    [n,name] = s
+    pick_colour(n) + name + pick_colour()
   l.join ' '
 
 
-# Borrowed from https://svn.apache.org/repos/asf/libcloud/trunk/libcloud/compute/drivers/linode.py
 LINODE_STATE =
-    '-2': 'BootFailed'           # Boot Failed
-    '-1': 'Creating'             # Being Created
-    '0' : 'New'                  # Brand New
-    '1' : 'Running'              # Running
-    '2' : 'Terminated'           # Powered Off
-    '3' : 'Rebooting'            # Shutting Down
+    '-2': 'Boot Failed'
+    '-1': 'Being Created'
+    '0' : 'Brand New'
+    '1' : 'Running'
+    '2' : 'Powered Off'
+    '3' : 'Shutting Down'
 
 command.jobs =
   help: "jobs\t\t\t\tList all Linode jobs"

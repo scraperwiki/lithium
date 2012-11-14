@@ -111,7 +111,12 @@ class Linode extends Instance
           body = JSON.parse body
           _.map _.zip(list, body), (item) ->
             [list_item, body_item] = item
-            list_item.comments = body_item.DATA[0].Comments
+            console.log list_item
+            console.log body_item
+            if body_item.DATA.length
+              list_item.comments = body_item.DATA[0].Comments
+            else
+              list_item.comments = ''
             return list_item
           if verbose
             requestArray = _.map list, (instance) ->
