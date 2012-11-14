@@ -267,8 +267,10 @@ class Linode extends Instance
     @client.call 'avail.LinodePlans', null, (err, res) ->
       p =  _.find res, (plan) ->
         plan.DISK == disk and plan.RAM == ram
-      callback "Plan not found", null unless p?
-      callback err, p.PLANID
+      if not p?
+        callback "Plan not found: RAM #{ram}MB; DISK #{disk}GB", null
+      else
+        callback err, p.PLANID
 
   @_get_distro: (name, callback) ->
     @client.call 'avail.distributions', null, (err, res) ->
