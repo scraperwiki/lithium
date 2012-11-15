@@ -205,10 +205,15 @@ class Instance
   # Spawn a command locally, needs to be executable
   # TODO: put somewhere more sane, name it properly: exec?
   _local_sh: (command, args, callback) ->
+    if command.match /^\.\./
+      console.log "Command starts .. [#{command}]; that probably won't work"
     cmd = spawn command, args
     cmd.stdout.on 'data', (data) -> console.log data.toString('ascii')
     cmd.stderr.on 'data', (data) -> console.log data.toString('ascii')
-    cmd.on 'exit', callback
+    cmd.on 'exit', (code, signal) ->
+      if code or signal
+        console.log "exit status #{code} signal #{signal}"
+      callback()
 
 _common_ssh_args = (key) -> [
   '-o', 'LogLevel=ERROR',
