@@ -22,34 +22,10 @@ command.help =
     """ + '    ' + cmdhelp + '\n'
     process.stdout.write help
 
-# args[2] is the name of the instance to start
-command.start =
-  help: "start <instance>\t\t\tStart an instance"
-  run: (args) ->
-    Linode.get args[2], (instance) ->
-      instance.start ->
-        process.stdout.write('started\n')
-
-# args[2] is the name of the instance to stop
-command.stop =
-  help: "stop <instance>\t\t\tStop an instance"
-  run: (args) ->
-    Linode.get args[2], (instance) ->
-      instance.stop ->
-        process.stdout.write('stopped\n')
-
-# args[2] is the name of the instance to restart
-command.restart =
-  help: "restart <instance>\t\t\tRestart an instance"
-  run: restart = (args) ->
-    Linode.get args[2], (instance) ->
-      instance.restart ->
-        process.stdout.write('restarted\n')
-
 # Takes a config name, and creates an instance based on that config.
 # args[2] is the name of the config
 command.create =
-  help: "create <config>\t\t\tCreate and deploy an instance by config"
+  help: "create <config>\t\t\tCreate and deploy and start an instance by config"
   run: (args) ->
     process.stdout.write('Creating...\n')
     Linode.create args[2], (dummy_, item) ->
@@ -69,6 +45,30 @@ command.destroy =
       Linode.destroy item, ->
         process.stdout.write "Destroyed #{item}\n"
         callback()
+
+# args[2] is the name of the instance to stop
+command.stop =
+  help: "stop <instance>\t\t\tStop an instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      instance.stop ->
+        process.stdout.write('stopped\n')
+
+# args[2] is the name of the instance to restart
+command.restart =
+  help: "restart <instance>\t\t\tRestart an instance"
+  run: restart = (args) ->
+    Linode.get args[2], (instance) ->
+      instance.restart ->
+        process.stdout.write('restarted\n')
+
+# args[2] is the name of the instance to start
+command.start =
+  help: "start <instance>\t\t\tStart an existing instance"
+  run: (args) ->
+    Linode.get args[2], (instance) ->
+      instance.start ->
+        process.stdout.write('started\n')
 
 # renames the instance args[2] to args[3]
 command.rename =
