@@ -1,14 +1,12 @@
 #!/usr/bin/env coffee
 
-tty = require 'tty'
-
 _ = require 'underscore'
 _s = require 'underscore.string'
 async = require 'async'
 
 Linode = require 'linode'
 
-interactive = tty.isatty(process.stdout.fd)
+interactive = Boolean process.stdout.isTTY
 
 command = {}
 
