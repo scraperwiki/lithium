@@ -69,16 +69,19 @@ class Instance
     else callback
 
   # Copy entire tree of files to the instance.
-  # All the files will be copied relative to the directory you
-  # pass in.  The copy starts by 'cd'ing (in a subshell) into
-  # the directory you pass as the argument (and scp -r the
-  # files).  Consequently, the files retain their relative position.
-  # So if you pass in /opt/sun/foobar and there is a
-  # file /opt/sun/foobar/snack/wozzle then it will get copied
-  # as snack/wozzle (ending up in ~/snack/wozzle where ~ is the
-  # home directory on the remote machine).
+  # The named directory will be copied over to (root's ~ directory)
+  # this instance.
+  # Example:
+  # cpdir '/home/drj/cobalt', callback
+  # This creates a new directory ~/cobalt which will have (recursively)
+  # a copy of all the files in /home/drj/cobalt.  Clear?
+  #
+  # Notes:
+  #   ~ for root is almost always /root.
+  #   Add '/.' to the directory if you do not want to create an extra level
+  #     of directories in the target instance.  runhook does this.
   cpdir: (dir, callback) ->
-    @_scp settings.sshkey_private, [dir+'/.'], callback, true
+    @_scp settings.sshkey_private, [dir], callback, true
 
   # Copy & run hooks on instance
   # TODO: coupled
@@ -98,7 +101,7 @@ class Instance
 
     console.log "Running hooks for #{config.name}"
 
-    @cpdir config.hooks_dir, (exit_code) =>
+    @cpdir config.hooks_dir + '/.', (exit_code) =>
       callback if exit_code > 0
 
       # Run hooks only from top-level of directory tree.
@@ -113,7 +116,7 @@ class Instance
   run_one_hook: (config_name, hook_name, callback) =>
     config = new Config config_name
     hook = {config_name: config.name, file: hook_name}
-    @cpdir config.hooks_dir, (exit_code) =>
+    @cpdir config.hooks_dir + '/.', (exit_code) =>
       if exit_code is not 0
         process.stderr.write "Failed to copy files #{config.hooks_dir}\n"
         callback 'cpdir error'

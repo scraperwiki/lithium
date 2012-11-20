@@ -111,6 +111,16 @@ command.ssh =
     Linode.get instancename, (instance) ->
       instance.ssh username
 
+# args[2] will be the local directory
+# args[3] will be the instance
+command.cpdir =
+  help: "cpdir <dir> <instance>\t\tCopy directory tree into /root on target instance"
+  run: (args) ->
+    localdir = args[2]
+    instancename = args[3]
+    Linode.get instancename, (instance) ->
+      instance.cpdir localdir, ->
+
 # Run all, or a single hook(s) on a specified instance by config
 # args[2] is the instance
 # args[3] is the config
