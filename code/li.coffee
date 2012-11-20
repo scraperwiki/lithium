@@ -1,10 +1,14 @@
 #!/usr/bin/env coffee
 
+tty = require 'tty'
+
 _ = require 'underscore'
 _s = require 'underscore.string'
 async = require 'async'
 
 Linode = require 'linode'
+
+interactive = tty.isatty(process.stdout.fd)
 
 command = {}
 
@@ -165,18 +169,22 @@ command.list =
           log_one_item item for item in list
 
 log_one_item = (item) ->
-  colour = pick_colour item.state
-  colour_off = pick_colour()
+  colour = ''
+  colour_off = ''
+  name_colour = ''
+  # It's critical that we don't use colour when the output
+  # is going into a pipe, because some scripts would get
+  # confused by colour.
+  if interactive
+    colour = pick_colour item.state
+    colour_off = pick_colour()
+    name_colour = '\x1b[22;37m'
   ipstuff = ''
   if item.ip_address?
     ipstuff += ' Pub:' + item.ip_address
   if item.private_ip_address? 
     ipstuff += ' Priv:' + item.private_ip_address
-  # Disable colour for now as doesn't work with some scripting of li list
-  # XXX DO NOT enable without making the colour conditional on it being called by a human
-  colour = ''
-  colour_off = ''
-  console.log "#{colour}#{item.name}#{colour_off} \x1b[22;37m[#{item.config.name}]#{ipstuff}\x1b[0m #{item.comments}"
+  console.log "#{colour}#{item.name}#{colour_off} #{name_colour}[#{item.config.name}]#{ipstuff}#{colour_off} #{item.comments}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?
