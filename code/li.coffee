@@ -119,7 +119,8 @@ command.cpdir =
     localdir = args[2]
     instancename = args[3]
     Linode.get instancename, (instance) ->
-      instance.cpdir localdir, ->
+      instance.cpdir localdir, (code, signal) ->
+        process.exit(code)
 
 # Run all, or a single hook(s) on a specified instance by config
 # args[2] is the instance
