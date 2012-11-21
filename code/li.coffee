@@ -175,9 +175,9 @@ command.list =
         if err?
           console.log err
         else
-          log_one_item item for item in list
+          log_one_item item, verbose for item in list
 
-log_one_item = (item) ->
+log_one_item = (item, verbose) ->
   colour = ''
   colour_off = ''
   name_colour = ''
@@ -188,12 +188,15 @@ log_one_item = (item) ->
     colour = pick_colour item.state
     colour_off = pick_colour()
     name_colour = '\x1b[22;37m'
+  named_state = ''
+  if verbose
+    named_state = ' ' + LINODE_STATE[item.state].replace(' ','-')
   ipstuff = ''
   if item.ip_address?
     ipstuff += ' Pub:' + item.ip_address
   if item.private_ip_address? 
     ipstuff += ' Priv:' + item.private_ip_address
-  console.log "#{colour}#{item.name}#{colour_off} #{name_colour}[#{item.config.name}]#{ipstuff}#{colour_off} #{item.comments}"
+  console.log "#{colour}#{item.name}#{colour_off} #{name_colour}[#{item.config.name}]#{named_state}#{ipstuff}#{colour_off} #{item.comments}"
 
 friendly_state = (state) ->
   if LINODE_STATE[state]?
