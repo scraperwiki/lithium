@@ -44,8 +44,12 @@ command.destroy =
   help: "destroy <instance> ...\t\tDestroy an instance (or instances)"
   run: (args) ->
     async.forEach args[2...], (item, callback) ->
-      Linode.destroy item, ->
-        process.stdout.write "Destroyed #{item}\n"
+      Linode.destroy item, (err, res) ->
+        if err?
+          errstr = err.error or String(err)
+          process.stdout.write "Error destroying #{item}: #{errstr}\n"
+        else
+          process.stdout.write "Destroyed #{item}\n"
         callback()
 
 # args[2] is the name of the instance to stop

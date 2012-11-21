@@ -46,6 +46,8 @@ class Linode extends Instance
 
   @destroy: (name, callback) ->
     @get name, (instance) =>
+      if instance.comments.match /live/i
+        return callback {error: "Cannot delete instance with 'live' in comment"}, null
       @client.call 'linode.delete',
          'LinodeID': instance.id
          'skipChecks': true
