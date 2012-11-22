@@ -1,42 +1,45 @@
 _li_complete ()   #  By convention, the function name
 {                 #  starts with an underscore
   local cur
-  compopt >/dev/null 2>&1 ||
-    compopt () (:)
+  local save_ifs
+  save_ifs=$IFS
 
   COMPREPLY=()   # Array variable storing the possible completions
   cur=${COMP_WORDS[COMP_CWORD]} # The word currently being completed
 
-  #create|deploy|destroy|help|jobs|list|rename|restart|sh|ssh|start|stop)
-
+  # a newline
+  IFS='
+'
+  # With -o nospace in force (see invocation of "complete", at end of script), we
+  # can explicitly add a space, exactly where we want it.
   # If first argument, it must be a command
   if [ $COMP_CWORD == 1 ]; then
-    COMPREPLY=( $( compgen -W 'help start stop rename restart create destroy sh ssh deploy runhook list jobs comment' -- $cur ) )
+    COMPREPLY=( $(unset IFS
+      printf '%s \n' $(
+      compgen -W 'help start stop rename restart create destroy sh ssh deploy runhook list jobs comment' -- $cur )
+        ) )
   elif [ $COMP_CWORD -ge 2 ]; then
     case ${COMP_WORDS[1]} in
-      # If a create command, the second argument must be a config
       create)
-        compopt -o nospace
+        # If a create command, the second argument must be a config
         if [ $COMP_CWORD == 2 ]; then
           COMPREPLY=( $( compgen -W '$(ls "$LITHIUM_CONFIG_PATH")' -- $cur ) )
         fi
         ;;
       deploy|destroy|help|restart|rename|sh|start|stop|ssh|comment)
-        compopt -o nospace
         if [ $COMP_CWORD == 2 ]; then
-          STUFF="$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/-/' )"
+          STUFF=$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/-/' )
           COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
         fi
         ;;
       runhook)
         # li runhook <instance> <config> [hook]
         if [ $COMP_CWORD == 2 ]; then
-          compopt -o nospace
-          STUFF="$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/-/' )"
+          STUFF=$(ls "$LITHIUM_CONFIG_PATH" | sed 's/$/-/' )
           COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
         elif [ $COMP_CWORD == 3 ]; then
-          STUFF="$(ls "$LITHIUM_CONFIG_PATH")"
-          COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
+          STUFF=$(ls "$LITHIUM_CONFIG_PATH")
+          COMPREPLY=( $( compgen -W "${STUFF}" -- $cur | sed 's/$/ /' ) )
         elif [ $COMP_CWORD == 4 ]; then
           STUFF=$(cd "$LITHIUM_CONFIG_PATH/${COMP_WORDS[3]}/hooks/"; ls [0-9]*)
           COMPREPLY=( $( compgen -W "${STUFF}" -- $cur ) )
@@ -45,7 +48,8 @@ _li_complete ()   #  By convention, the function name
     esac
   fi
 
+  IFS=$save_ifs
   return 0
 }
 
-complete -F _li_complete -o filenames li
+complete -F _li_complete -o nospace li
