@@ -1,6 +1,8 @@
 _li_complete ()   #  By convention, the function name
 {                 #  starts with an underscore
   local cur
+  compopt >/dev/null 2>&1 ||
+    compopt () (:)
 
   COMPREPLY=()   # Array variable storing the possible completions
   cur=${COMP_WORDS[COMP_CWORD]} # The word currently being completed
