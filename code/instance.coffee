@@ -130,10 +130,10 @@ class Instance
   # or DDD_something.l.ext (locally).
   _call_hook: (hook, callback) =>
     if /^\d+_.+\.r\.\w/.test hook.file
-      console.log "Running remote #{hook.file}"
+      console.log "  Running remote #{hook.file}"
       @sh "sh /root/#{hook.file} #{@name}", callback
     else if /^\d+_.+\.l\.\w/.test hook.file
-      console.log "Running local #{hook.file}"
+      console.log "  Running local #{hook.file}"
       hooks_dir="#{settings.config_path}/#{hook.config_name}/hooks"
       oldcwd = process.cwd()
       process.chdir hooks_dir
