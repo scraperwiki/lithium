@@ -141,7 +141,8 @@ class Instance
         process.chdir oldcwd
         callback()
     else
-      console.log "(Ignoring #{hook.file})"
+      if hook.file != "config" and hook.file != "test"
+          console.log "(Ignoring #{hook.file})"
       callback()
 
   # Connect via SSH and execute command.
@@ -192,16 +193,26 @@ class Instance
     args = _common_ssh_args key
     args.push "root@#{@ip_address}"
     args.push "exit 99"
+    waited = 0
     again = =>
       ssh = spawn 'ssh', args
-      ssh.stdout.on 'data', (data) ->
-        process.stdout.write '[1;32mwaiting-for-sshd[0m: ' + data.toString('ascii')
-      ssh.stderr.on 'data', (data) ->
-        process.stderr.write '[1;31mwaiting-for-sshd[0m: ' + data.toString('ascii')
+
+      ssh_output_handler = (data) ->
+        if process.stderr.isTTY
+          process.stderr.write '\r\x1B[K' + Array(waited).join('.') + ' '
+        process.stderr.write 'waiting-for-sshd: ' + data.toString('ascii').trim()
+        if not process.stderr.isTTY
+          process.stderr.write '\n'
+      ssh.stdout.on 'data', ssh_output_handler
+      ssh.stderr.on 'data', ssh_output_handler
+
       ssh.on 'exit', (rc) ->
         if rc == 99
+          if waited
+              process.stderr.write '\r\x1B[K\r' # clear the line
           callback()
         else
+          ++waited
           setTimeout again, 999
     again()
 
