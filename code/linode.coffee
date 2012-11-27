@@ -151,7 +151,7 @@ class Linode extends Instance
       throw "instance not found" unless k?
       callback k
 
-  # Returns (by passing to the *callback* function) the arguments (err, res) whre
+  # Returns (by passing to the *callback* function) the arguments (err, res) where
   # *err* is an error, and *res* is an array of jobs.
   @jobs: (instance, callback) ->
     @client.call 'linode.job.list',
