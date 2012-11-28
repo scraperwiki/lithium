@@ -141,8 +141,7 @@ class Instance
         process.chdir oldcwd
         callback()
     else
-      if hook.file != "config" and hook.file != "test"
-          console.log "(Ignoring #{hook.file})"
+      # console.log "(Ignoring #{hook.file})"
       callback()
 
   # Connect via SSH and execute command.
