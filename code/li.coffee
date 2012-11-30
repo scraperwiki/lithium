@@ -135,6 +135,8 @@ command.runhook =
   run: (args) ->
     [instance_name, config, hook] = [ args[2], args[3], args[4] ]
     finished = ->
+      console.log "runhook finished, exiting by force."
+      process.exit 0
 
     Linode.get instance_name, (instance) ->
       if hook?
