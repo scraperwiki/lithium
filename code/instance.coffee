@@ -160,40 +160,38 @@ class Instance
   # *command* is a list of strings.
   # TODO: proper callbacks?
   _ssh: (key, command, callback) ->
-    @_wait_for_sshd key, =>
-      stdout_ends_in_newline = true
-      stderr_ends_in_newline = true
-      args = _common_ssh_args key
-      extra = ["root@#{@ip_address}"].concat command
-      args = args.concat extra
+    stdout_ends_in_newline = true
+    stderr_ends_in_newline = true
+    args = _common_ssh_args key
+    extra = ["root@#{@ip_address}"].concat command
+    args = args.concat extra
 
-      ssh = spawn 'ssh', args
-      process.stdin.resume()
-      process.stdin.pipe ssh.stdin
-      ssh.stdout.on 'data', (data) ->
-        stuff = data.toString('ascii')
-        process.stdout.write stuff
-        stdout_ends_in_newline = /\n$/.test stuff
-      ssh.stderr.on 'data', (data) ->
-        stuff = data.toString('ascii')
-        process.stderr.write stuff
-        stderr_ends_in_newline = /\n$/.test stuff
-      ssh.on 'exit', callback
+    ssh = spawn 'ssh', args
+    process.stdin.resume()
+    process.stdin.pipe ssh.stdin
+    ssh.stdout.on 'data', (data) ->
+      stuff = data.toString('ascii')
+      process.stdout.write stuff
+      stdout_ends_in_newline = /\n$/.test stuff
+    ssh.stderr.on 'data', (data) ->
+      stuff = data.toString('ascii')
+      process.stderr.write stuff
+      stderr_ends_in_newline = /\n$/.test stuff
+    ssh.on 'exit', callback
 
   # Copy files via SCP
   # TODO: factor out into SSH & SCP class, proper callbacks?
   _scp: (key, files, callback, recursive=false) ->
-    @_wait_for_sshd key, =>
-      args = _common_ssh_args key
-      if recursive
-        args = ['-r'].concat args
-      args = args.concat files
-      args.push "root@#{@ip_address}:/root"
+    args = _common_ssh_args key
+    if recursive
+      args = ['-r'].concat args
+    args = args.concat files
+    args.push "root@#{@ip_address}:/root"
 
-      ssh = spawn 'scp', args
-      ssh.stdout.on 'data', (data) -> console.log data.toString('ascii')
-      ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
-      ssh.on 'exit', callback
+    ssh = spawn 'scp', args
+    ssh.stdout.on 'data', (data) -> console.log data.toString('ascii')
+    ssh.stderr.on 'data', (data) -> console.log data.toString('ascii')
+    ssh.on 'exit', callback
 
   # Wait until we can connect to ssh and run the command "exit 99".  It needs to
   # be about this complicated because we run this when a server is starting up;

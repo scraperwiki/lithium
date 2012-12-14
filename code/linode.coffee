@@ -2,6 +2,7 @@
 # ScraperWiki Limited.  2012.
 
 fs = require 'fs'
+settings = require 'settings'
 
 {LinodeClient} = require 'linode-api'
 _ = require 'underscore'
@@ -161,8 +162,9 @@ class Linode extends Instance
   start: (callback) ->
     Linode.client.call 'linode.boot',
       'LinodeID': @id
-      , (err, res) ->
-        callback()
+      , (err, res) =>
+        @_wait_for_sshd settings.sshkey_private, =>
+          callback()
 
   stop: (callback) ->
     Linode.client.call 'linode.shutdown',
