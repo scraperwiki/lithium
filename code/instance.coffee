@@ -1,15 +1,16 @@
 # Instance interface.
-spawn         = require('child_process').spawn
-fs            = require 'fs'
-net           = require 'net'
+spawn = require('child_process').spawn
+fs = require 'fs'
+net = require 'net'
 
-_             = require 'underscore'
-async         = require 'async'
+_ = require 'underscore'
+async = require 'async'
 # https://github.com/jprichardson/node-kexec
-kexec         = require 'kexec'
+kexec = require 'kexec'
 
-{Config}      = require 'config'
-settings      = require 'settings'
+{Config} = require 'config'
+settings = require 'settings'
+
 
 class Instance
 
@@ -125,19 +126,30 @@ class Instance
 
 
   #### Private methods ####
-
+  
+  # If the TIME environment variable is set, show how long hooks take
+  if process.env.TIME?
+    _time_it = (f) -> f()
+  else
+    _time_it = ->
+  
   # Runs file if it is of the form DDD_something.r.ext (remotely)
   # or DDD_something.l.ext (locally).
   _call_hook: (hook, callback) =>
     if /^\d+_.+\.r\.\w/.test hook.file
       console.log "  Running remote #{hook.file}"
-      @sh "sh /root/#{hook.file} #{@name}", callback
+      _time_it -> console.time('remote hook')
+      @sh "sh /root/#{hook.file} #{@name}", (args...) ->
+        _time_it -> console.timeEnd('remote hook')
+        callback.apply(args)
     else if /^\d+_.+\.l\.\w/.test hook.file
       console.log "  Running local #{hook.file}"
       hooks_dir="#{settings.config_path}/#{hook.config_name}/hooks"
       oldcwd = process.cwd()
       process.chdir hooks_dir
+      _time_it -> console.time('local hook')
       @_local_sh "#{hooks_dir}/#{hook.file}", [@name], ->
+        _time_it -> console.timeEnd('local hook')
         process.chdir oldcwd
         callback()
     else
