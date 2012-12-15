@@ -272,10 +272,11 @@ class Linode extends Instance
   # Takes RAM as MB and disk as GB.
   @_get_plan: (ram, disk, callback) ->
     @client.call 'avail.LinodePlans', null, (err, res) ->
+      # console.log res # shows how many available plans in each datacentre
       p =  _.find res, (plan) ->
         plan.DISK == disk and plan.RAM == ram
       if not p?
-        callback "Plan not found: RAM #{ram}MB; DISK #{disk}GB", null
+        callback "Linode plan not available in datacentre: RAM #{ram}MB; DISK #{disk}GB", null
       else
         callback err, p.PLANID
 
