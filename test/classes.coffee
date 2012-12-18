@@ -23,6 +23,7 @@ describe 'Config inclusion', ->
       config.description.should.equal 'A fairly plain Linux cloud server'
       config.ram.should.equal 512
       config.disk_size.should.equal 20
+      config.swap_size.should.equal 1
 
   describe 'When boxecutor config is accessed', ->
     before ->
@@ -31,6 +32,7 @@ describe 'Config inclusion', ->
     it 'should contain included fields from vanilla', ->
       config.ram.should.equal 512
       config.disk_size.should.equal 20
+      config.swap_size.should.equal 1
     
     it 'should not have its own fields overriden', ->
       config.name.should.equal 'boxecutor'

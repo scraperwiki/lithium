@@ -3,6 +3,7 @@
     "description"   : "A fairly plain Linux cloud server",
     "ram"           : 512,
     "disk_size"     : 20,
+    "swap_size"     : 1, 
     "distribution"  : "Ubuntu 12.04 LTS",
     "kernel"        : "3.2.1"
 }

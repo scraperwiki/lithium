@@ -34,7 +34,8 @@ class Linode extends Instance
       @_addprivate
       @_distro
       @_create_disk
-      @_disk_created
+      @_create_swap
+      @_swap_created
       @_create_linode_config
       @_cache_ips
       @_create_subdomain
@@ -229,13 +230,22 @@ class Linode extends Instance
       'LinodeID': @linode_id
       'DistributionID': id
       'Label': 'system'
-      'Size': @config.disk_size * 1000
+      'Size': (@config.disk_size - @config.swap_size) * 1000
       'rootPass': Math.random() + "" + Math.random()
       'rootSSHKey': @_read_public_ssh_key()
       , callback
 
-  @_disk_created: (res, callback) =>
+  @_create_swap: (res, callback) =>
     @disk_id = res['DiskID']
+    @client.call 'linode.disk.create',
+      'LinodeID': @linode_id
+      'Label': 'swap'
+      'Size': @config.swap_size * 1000
+      'Type': 'swap'
+      , callback
+
+  @_swap_created: (res, callback) =>
+    @swap_id = res['DiskID']
     @_get_kernel @config.kernel, callback
 
   @_create_linode_config: (kernel_id, callback) =>
@@ -244,7 +254,7 @@ class Linode extends Instance
       'KernelID': kernel_id
       'Label': @config.name
       'Comments': @config.description
-      'DiskList': @disk_id
+      'DiskList': @disk_id + "," + @swap_id
       'RootDeviceNum': 1
       , callback
 
