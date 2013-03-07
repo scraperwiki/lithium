@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "coffee-script": "1.3.2",
+    "coffee-script": "~1.4",
     "underscore": ">=1.4",
     "underscore.string": ">0",
     "linode-api": "0.1.2",
