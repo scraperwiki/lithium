@@ -1,5 +1,7 @@
 # Lithium
 
+LITHIUM IS DEPRECATED. We're using Juju instead now.
+
 ## Controlling sysadmin insanity
 
 Lithium is a system of configurations and a command line tool to 
